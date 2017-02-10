@@ -9,27 +9,46 @@ public class DeckOfCards {
 
 	private int cardsDealt;
 	private PlayingCard[] deck;
-	private Semaphore dealAvailable;
+	private Semaphore dealerAvailable;
 	
 	//TODO
 	public DeckOfCards(){
+		dealerAvailable = new Semaphore(1);
 		reset();
 		shuffle();
-		dealAvailable = new Semaphore(1);
 	}
 	
-	//TODO
+	/*
+	 * Returns next non-dealt card and increments cardsDealt index
+	 * Uses the semaphore to lock down a critical section in case parallel access occurs
+	 */
 	public PlayingCard dealNext() throws InterruptedException{
-		dealAvailable.acquire();
+		dealerAvailable.acquire();
 		PlayingCard outputCard = deck[cardsDealt];
 		cardsDealt++;
-		dealAvailable.release();
+		dealerAvailable.release();
 		return outputCard;
 	}
 	
-	//TODO
-	public void returnCard(PlayingCard discarded){
-		
+	/*
+	 * Places a previously dealt card back on the bottom of the deck
+	 * Uses the semaphore to ensure other threads don't alter card indexes while running
+	 */
+	public void returnCard(PlayingCard discarded) throws InterruptedException{
+		int previousIndex = 0;
+		dealerAvailable.acquire();
+		// Find previous index of card in the deck array
+		for (int i=0; i<deck.length && !deck[i].equals(discarded); i++){
+			previousIndex = i;
+		}
+		// Move all other cards up one index in array
+		for (int i=previousIndex; i<deck.length-1; i++){
+			deck[i] = deck[i+1];
+		}
+		// Put discarded on bottom of deck
+		deck[deck.length] = discarded;
+		cardsDealt--;
+		dealerAvailable.release();;
 	}
 	
 	/*
@@ -61,7 +80,6 @@ public class DeckOfCards {
 	
 	//TODO
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 	}
 
