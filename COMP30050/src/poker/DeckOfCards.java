@@ -14,6 +14,7 @@ public class DeckOfCards {
 	//TODO
 	public DeckOfCards(){
 		dealerAvailable = new Semaphore(1);
+		deck = PlayingCard.newFullPack();
 		reset();
 		shuffle();
 	}
@@ -24,31 +25,13 @@ public class DeckOfCards {
 	 */
 	public PlayingCard dealNext() throws InterruptedException{
 		dealerAvailable.acquire();
-		PlayingCard outputCard = deck[cardsDealt];
-		cardsDealt++;
+		PlayingCard outputCard = null;
+		if (cardsDealt < 52){
+			outputCard = deck[cardsDealt];
+			cardsDealt++;
+		}
 		dealerAvailable.release();
 		return outputCard;
-	}
-	
-	/*
-	 * Places a previously dealt card back on the bottom of the deck
-	 * Uses the semaphore to ensure other threads don't alter card indexes while running
-	 */
-	public void returnCard(PlayingCard discarded) throws InterruptedException{
-		int previousIndex = 0;
-		dealerAvailable.acquire();
-		// Find previous index of card in the deck array
-		for (int i=0; i<deck.length && !deck[i].equals(discarded); i++){
-			previousIndex = i;
-		}
-		// Move all other cards up one index in array
-		for (int i=previousIndex; i<deck.length-1; i++){
-			deck[i] = deck[i+1];
-		}
-		// Put discarded on bottom of deck
-		deck[deck.length] = discarded;
-		cardsDealt--;
-		dealerAvailable.release();;
 	}
 	
 	/*
@@ -71,16 +54,26 @@ public class DeckOfCards {
 	}
 	
 	/*
-	 * Creates a new deck of cards array and sets cards dealt to zero
+	 * Sets cards dealt to zero
 	 */
 	public void reset(){
-		deck = PlayingCard.newFullPack();
 		cardsDealt = 0;
 	}
 	
-	//TODO
-	public static void main(String[] args) {
-
+	public static void main(String[] args) throws InterruptedException {
+		
+		DeckOfCards testDeck = new DeckOfCards();
+		PlayingCard[] testHand = new PlayingCard[5];
+		PlayingCard[] cardsAlreadyDealt = new PlayingCard[52];
+		
+		
+		for (int i=0; i<10 ; i++){
+			for(int j=0; j<5; j++){
+				testHand[j] = testDeck.dealNext();
+				System.out.println(testHand[j].toString());
+			}
+		}
+		
 	}
 
 }
