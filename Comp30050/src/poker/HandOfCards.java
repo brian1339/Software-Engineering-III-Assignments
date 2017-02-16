@@ -16,9 +16,10 @@ public class HandOfCards {
 		sort();
 	}
 	
+	/*
+	 * Uses a bubble sort to sort the cards in the hand from high game value to low
+	 */
 	private void sort(){
-		
-		//System.out.println("Unsorted " + this);
 		boolean swapped = true;
 		while (swapped) {
 			swapped = false;
@@ -31,10 +32,12 @@ public class HandOfCards {
 					swapped = true;
 				}
 			}
-			//System.out.println("Sorting pass " + this);
 		}
 	}
 	
+	/*
+	 * Returns a string of all the cards in the hand separated by spaces
+	 */
 	public String toString(){
 		String output = "";
 		for (int i=0; i<CARDS_HELD; i++){
@@ -43,8 +46,8 @@ public class HandOfCards {
 		return output;
 	}
 	
-	/*
-	 * Checks whether cards are straight ie. they decrement in gameValue by 1 as we go along the array
+	/**
+	 * Checks whether cards are straight ie. they all decrement in gameValue by 1 as we go along the array
 	 * This saves code repeat in our public boolean hand checks below
 	 */
 	private boolean straightCards(){
@@ -57,7 +60,7 @@ public class HandOfCards {
 		return straightCards;
 	}
 	
-	/*
+	/**
 	 * Checks whether all cards in the array are the same suit
 	 * Again saves code repeat in public boolean hand checks
 	 */
@@ -71,93 +74,80 @@ public class HandOfCards {
 		return sameSuit;
 	}
 	
+	/**
+	 * Checks whether there is a segment of the card array, where the card game values all match,
+	 * with length equal the number given as input
+	 * Saves code repeat in all gameValue matching boolean methods for Hand checking except for isTwoPair
+	 * @return False if no segment match of that length or segment of matching cards is longer than length 
+	 * specified. Returns true if segment where all card values match of exact input length exists
+	 */
+	private boolean segmentMatch(int segmentLength){
+		boolean segmentMatch = false;
+		for (int i=segmentLength; i<cardArray.length; i++){
+			boolean thisSegmentMatches = true;
+			for (int j=i-1; j>i-segmentLength; j++){
+				if (cardArray[j].getGameValue() != cardArray[i].getGameValue()){
+					thisSegmentMatches = false;
+					break;
+				}
+			}
+			if (thisSegmentMatches && cardArray[i+1].getGameValue()!=cardArray[i].getGameValue()){
+				segmentMatch = true;
+			}
+		}
+		return segmentMatch;
+	}
+	
 	public boolean isRoyalFlush() {
-		boolean roayalFlush = true;
-		// Check the first card in hand is an Ace, if not
-		if (cardArray[0].getGameValue() != 14) {
-			roayalFlush = false;
-		}
-		//Check suits of cards match
-		if (!sameSuitCards()){
-			roayalFlush = false;
-		}
-		//Check that cards are straight
-		if (!straightCards()){
-			roayalFlush = false;
-		}
-		return roayalFlush;
+		return cardArray[0].getGameValue() == 14 && straightCards() && sameSuitCards();
 	}
 	
 	public boolean isStraightFlush() {
-		boolean straightFlush = true;
-		
 		//Check for RoyalFlush first
 		if (isRoyalFlush()){
 			return false;
 		}
-		//Check suits of cards match
-		if (!sameSuitCards()){
-			straightFlush = false;
-		}
-		//Check that cards are straight ie. their game value decrements by 1 each array entry
-		if (!straightCards()){
-			straightFlush = false;
-		}
-		return straightFlush;
+		return straightCards() && sameSuitCards();
 	}
 	
 	public boolean isFourOfAKind() {
-		
+		return segmentMatch(4);
 	}
 	
 	public boolean isFullHouse() {
-		
+		return segmentMatch(3) && segmentMatch(2);
 	}
 	
 	public boolean isFlush(){
-		//Check for RoyalFlush and StraightFlush first
+		//First, check all hands that supersede this one 
 		if (isStraightFlush() || isRoyalFlush()){
 			return false;
 		}
-		boolean flush = true;
-		//Check suits of cards match
-		for (int i=1; i<cardArray.length; i++){
-			if (cardArray[i-1].getSuit() != cardArray[i].getSuit()){
-				flush = false;
-			}
-		}
-		return flush;
+		
+		return sameSuitCards();
 	}
 	
 	public boolean isStraight(){
-		//Check for RoyalFlush and StraightFlush first
+		//Check all hands that supersede this one 
 		if (isStraightFlush() || isRoyalFlush()){
 			return false;
 		}
-		boolean straight = true;
-		//Check that cards are straight ie. their game value decrements by 1 each array entry
-		for (int i=1; i<cardArray.length; i++){
-			if (cardArray[i-1].getGameValue() != cardArray[i].getGameValue()-1){
-				straight = false;
-			}
-		}
-		return straight;
+		
+		return straightCards();
 	}
 	
 	public boolean isThreeOfAKind() {
-		//Check all hands that supersede this one 
-		if (isFullHouse() ||isFourOfAKind()){
+		//Check all hands that could supersede this one 
+		if (isFullHouse()){
 			return false;
 		}
 		
-		boolean threeOfAKind = false;
-		
-		
+		return segmentMatch(3);
 	}
 	
 	public boolean isTwoPair(){
-		//Check all hands that supersede this one 
-		if (isThreeOfAKind() || isFullHouse() ||isFourOfAKind()){
+		//Check all hands that could supersede this one 
+		if (isFullHouse() || isFourOfAKind()){
 			return false;
 		}
 		
@@ -178,23 +168,21 @@ public class HandOfCards {
 	}
 	
 	public boolean isOnePair(){
-		//First, check all hands that supersede this one 
-		if (isTwoPair() || isThreeOfAKind() || isFullHouse() ||isFourOfAKind()){
+		//First, check all hands that could supersede this one 
+		if (isTwoPair() || isFullHouse()){
 			return false;
 		}
-		
-		//Check if there are a pair of adjacent cards in the sorted array with the same game value
-		boolean onePair = false;
-		for (int i=1; i<cardArray.length; i++){
-			if (cardArray[i-1].getGameValue() == cardArray[i].getGameValue()){
-				onePair = true;
-			}
-		}
-		return onePair;
+		return segmentMatch(2);
 	}
 	
 	public boolean isHighHand(){
-		
+		if (isRoyalFlush() || isStraightFlush() || isFourOfAKind() || isFullHouse() || isFlush() 
+				|| isStraight() || isThreeOfAKind() || isTwoPair() || isOnePair()){
+			return false;
+		}
+		else{
+			return true;
+		}
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
