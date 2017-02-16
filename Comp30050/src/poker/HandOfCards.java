@@ -40,8 +40,8 @@ public class HandOfCards {
 	 */
 	public String toString(){
 		String output = "";
-		for (int i=0; i<CARDS_HELD; i++){
-			output += cardArray[i] + " ";
+		for (int i=0; i<cardArray.length; i++){
+			output += cardArray[i] +"(" + cardArray[i].getGameValue() + ")" + " ";
 		}
 		return output;
 	}
@@ -53,7 +53,7 @@ public class HandOfCards {
 	private boolean straightCards(){
 		boolean straightCards = true;
 		for (int i=1; i<cardArray.length; i++){
-			if (cardArray[i-1].getGameValue() != cardArray[i].getGameValue()-1){
+			if (cardArray[i].getGameValue() != cardArray[i-1].getGameValue()-1){
 				straightCards = false;
 			}
 		}
@@ -83,16 +83,29 @@ public class HandOfCards {
 	 */
 	private boolean segmentMatch(int segmentLength){
 		boolean segmentMatch = false;
-		for (int i=segmentLength; i<cardArray.length; i++){
+		for (int i=segmentLength-1; i<cardArray.length; i++){
 			boolean thisSegmentMatches = true;
-			for (int j=i-1; j>i-segmentLength; j++){
+			for (int j=i-1; j>i-segmentLength; j--){
 				if (cardArray[j].getGameValue() != cardArray[i].getGameValue()){
 					thisSegmentMatches = false;
 					break;
 				}
 			}
-			if (thisSegmentMatches && cardArray[i+1].getGameValue()!=cardArray[i].getGameValue()){
+			if (thisSegmentMatches){
 				segmentMatch = true;
+			}
+			if(segmentMatch && i<cardArray.length-1){
+				if (cardArray[i].getGameValue() == cardArray[i+1].getGameValue()){
+					segmentMatch = false;
+				}
+			}
+			if(segmentMatch && (i-segmentLength)>cardArray.length+1){
+				if (cardArray[i-segmentLength].getGameValue() == cardArray[i-segmentLength-1].getGameValue()){
+					segmentMatch = false;
+				}
+			}
+			if(segmentMatch){
+				break;
 			}
 		}
 		return segmentMatch;
@@ -185,13 +198,66 @@ public class HandOfCards {
 		}
 	}
 	
+	private String handType(){
+		String handType ="";
+		if (isRoyalFlush()){
+			handType = "Royal Flush";
+		}
+		if(isStraightFlush()){
+			handType = "Straight Flush";
+		}
+		if(isFourOfAKind()){
+			handType = "Four Of A Kind";
+		}
+		if(isFullHouse()){
+			handType = "Full House";
+		}
+		if (isFlush()) {
+			handType = "Flush";
+		}
+		if (isStraight()){
+			handType = "Straight";
+		}
+		if (isThreeOfAKind()) {
+			handType = "Three Of A Kind";
+		}
+		if (isTwoPair()) {
+			handType = "Two Pair";
+		}
+		if (isOnePair()) {
+			handType = "One Pair";
+		}
+		if (isHighHand()){
+			handType = "High Hand";
+		}
+		return handType;
+	}
+	
+	private void setHand(PlayingCard[] newHand){
+		cardArray = newHand;
+		sort();
+	}
+	
 	public static void main(String[] args) throws InterruptedException {
 		DeckOfCards testDeck = new DeckOfCards();
 		HandOfCards testHand;
-		for (int i=0; i<5; i++){
+		for (int i=0; i<10000; i++){
 			testHand = new HandOfCards(testDeck);
-			System.out.println(testHand.toString());
+			System.out.println(testHand.toString() + testHand.handType());
+			testDeck.reset();
+			testDeck.shuffle();
 		}
+		PlayingCard[] royalFlush = new PlayingCard[5];
+		for (int i=0; i<5; i++){
+			royalFlush[i] = new PlayingCard(PlayingCard.CARD_TYPES[(9+i)%13], PlayingCard.SUITS[0], PlayingCard.FACE_VALUES[(9+i)%13], PlayingCard.GAME_VALUES[(9+i)%13] );
+		}
+		testHand = new HandOfCards(testDeck);
+		testHand.setHand(royalFlush);
+		
+		testHand.setHand(PlayingCard.newFullPack());
+		System.out.println(testHand.toString());
+	
+		//System.out.println(testHand.toString() + testHand.handType());
 	}
 
 }

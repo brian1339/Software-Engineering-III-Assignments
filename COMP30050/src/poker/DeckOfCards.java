@@ -52,6 +52,27 @@ public class DeckOfCards {
 	}
 	
 	/*
+	 * Returns a card to the bottom of the deck.
+	 * Uses semaphore to ensure parallel access is not an issue
+	 */
+	public void returnCard(PlayingCard discarded) throws InterruptedException{
+		int previousIndex = 0;
+		dealerAvailable.acquire();
+		// Find previous index of card in the deck array
+		for (int i=0; i<deck.length && !deck[i].equals(discarded); i++){
+			previousIndex = i;
+		}
+		// Move all other cards up one index in array
+		for (int i=previousIndex; i<deck.length-1; i++){
+			deck[i] = deck[i+1];
+		}
+		// Put discarded on bottom of deck
+		deck[deck.length] = discarded;
+		cardsDealt--;
+		dealerAvailable.release();;
+	}
+	
+	/*
 	 * Sets cards dealt to zero
 	 */
 	public void reset(){
