@@ -48,7 +48,7 @@ public class PlayingCard {
 		
 		PlayingCard[] newPack = new PlayingCard[52];
 		for (int i=0; i<UNIQUE_CARD_COUNT; i++){
-			newPack[i] = new PlayingCard(CARD_TYPES[(i)%13], SUITS[(i/13)%4], FACE_VALUES[(i/4)%13], GAME_VALUES[(i/4)%13]);
+			newPack[i] = new PlayingCard(CARD_TYPES[i%13], SUITS[(i/13)%4], FACE_VALUES[i%13], GAME_VALUES[i%13]);
 		}
 		return newPack;
 	}

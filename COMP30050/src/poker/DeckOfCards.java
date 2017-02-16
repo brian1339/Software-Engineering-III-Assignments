@@ -1,7 +1,5 @@
 package poker;
 
-import poker.PlayingCard;
-
 import java.util.concurrent.Semaphore;
 import java.util.Random;
 
@@ -45,7 +43,7 @@ public class DeckOfCards {
 			do {
 				index1 = rand.nextInt(deck.length);
 				index2 = rand.nextInt(deck.length);
-			} while (index1 != index2);
+			} while (index1 == index2);
 			
 			PlayingCard temp = deck[index1];
 			deck[index1] = deck[index2];
