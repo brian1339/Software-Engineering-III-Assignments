@@ -17,21 +17,21 @@ public class HandOfCards {
 	
 	private void sort(){
 		
-		System.out.println("Unsorted " +this);
+		//System.out.println("Unsorted " + this);
 		boolean swapped = true;
-	    while (swapped) {
-	       swapped = false;
-	       for(int i=1; i<cardArray.length; i++) {
-	    	   PlayingCard temp;
-	           if(cardArray[i-1].getGameValue() < cardArray[i].getGameValue()) {
-	               temp = cardArray[i-1];
-	               cardArray[i-1] = cardArray[i];
-	               cardArray[i] = temp;
-	               swapped = true;
-	            }
-	        }
-	       System.out.println("Sorting pass " + this);
-	    }
+		while (swapped) {
+			swapped = false;
+			for (int i=1; i < cardArray.length; i++) {
+				PlayingCard temp;
+				if (cardArray[i-1].getGameValue() < cardArray[i].getGameValue()) {
+					temp = cardArray[i-1];
+					cardArray[i-1] = cardArray[i];
+					cardArray[i] = temp;
+					swapped = true;
+				}
+			}
+			//System.out.println("Sorting pass " + this);
+		}
 	}
 	
 	public String toString(){
@@ -41,6 +41,56 @@ public class HandOfCards {
 		}
 		return output;
 	}
+	
+	public boolean isRoyalFlush() {
+		
+	}
+	
+	public boolean isStraightFlush() {
+		
+	}
+	
+	public boolean isFourOfAKind() {
+		
+	}
+	
+	public boolean isFullHouse() {
+		
+	}
+	
+	public boolean isFlush(){
+		boolean flush = true;
+		for (int i=1; i<cardArray.length; i++){
+			if (cardArray[i-1].getSuit() != cardArray[i].getSuit()){
+				flush = false;
+			}
+		}
+		return flush;
+	}
+	
+	public boolean isStraight(){
+		boolean straight = true;
+		for (int i=0; i<cardArray.length; i++){
+			
+		}
+	}
+	
+	public boolean isThreeOfAKind() {
+		
+	}
+	
+	public boolean isTwoPair(){
+		
+	}
+	
+	public boolean isOnePair(){
+		
+	}
+	
+	public boolean isHighHand(){
+		
+	}
+	
 	
 	
 
