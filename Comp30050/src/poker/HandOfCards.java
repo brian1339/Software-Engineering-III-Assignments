@@ -6,18 +6,21 @@ public class HandOfCards {
 	private PlayingCard[] cardArray;
 	private DeckOfCards deck;
 	
-	
+	/*
+	 * Constructor takes in deck, initializes card array and then fills in with 5
+	 * cards dealt from deck
+	 */
 	public HandOfCards(DeckOfCards deck) throws InterruptedException {
 		this.deck = deck;
 		cardArray = new PlayingCard[CARDS_HELD];
 		for (int i=0; i<CARDS_HELD; i++){
-			cardArray[i] = deck.dealNext();
+			cardArray[i] = this.deck.dealNext();
 		}
 		sort();
 	}
 	
-	/*
-	 * Uses a bubble sort to sort the cards in the hand from high game value to low
+	/**
+	 * Uses a bubble sort to sort the cards by game value in the hand from high game value to low
 	 */
 	private void sort(){
 		boolean swapped = true;
@@ -35,8 +38,8 @@ public class HandOfCards {
 		}
 	}
 	
-	/*
-	 * Returns a string of all the cards in the hand separated by spaces
+	/**
+	 * Returns a string of all the cards in the hand, along with their game value, separated by spaces
 	 */
 	public String toString(){
 		String output = "";
@@ -47,24 +50,25 @@ public class HandOfCards {
 	}
 	
 	/**
-	 * Checks whether cards are straight ie. they all decrement in gameValue by 1 as we go along the array
-	 * This saves code repeat in our public boolean hand checks below
+	 * Checks whether cards are in sequential order ie. they all decrement in gameValue by 1 as we 
+	 * go along the sorted array.
+	 * This saves a lot of code repeat in our public boolean hand checks below
 	 */
-	private boolean straightCards(){
-		boolean straightCards = true;
+	private boolean hasSequentialOrder(){
+		boolean sequentialCards = true;
 		for (int i=1; i<cardArray.length; i++){
 			if (cardArray[i].getGameValue() != cardArray[i-1].getGameValue()-1){
-				straightCards = false;
+				sequentialCards = false;
 			}
 		}
-		return straightCards;
+		return sequentialCards;
 	}
 	
 	/**
 	 * Checks whether all cards in the array are the same suit
-	 * Again saves code repeat in public boolean hand checks
+	 * Again, saves code repeat in public boolean hand checks
 	 */
-	private boolean sameSuitCards(){
+	private boolean hasAllSameSuit(){
 		boolean sameSuit = true;
 		for (int i=1; i<cardArray.length; i++){
 			if (cardArray[i-1].getSuit() != cardArray[i].getSuit()){
@@ -76,88 +80,141 @@ public class HandOfCards {
 	
 	/**
 	 * Checks whether there is a segment of the card array, where the card game values all match,
-	 * with length equal the number given as input
+	 * with length equal EXACTLY to the number given as input
 	 * Saves code repeat in all gameValue matching boolean methods for Hand checking except for isTwoPair
 	 * @return False if no segment match of that length or segment of matching cards is longer than length 
 	 * specified. Returns true if segment where all card values match of exact input length exists
 	 */
 	private boolean segmentMatch(int segmentLength){
+		// Assume false first
 		boolean segmentMatch = false;
+		
+		// Check all possible end points of segments for the cardArray
 		for (int i=segmentLength-1; i<cardArray.length; i++){
 			boolean thisSegmentMatches = true;
+			
+			// Check if previous cards in segment ending at i are equal in game value to cardArray[i]
 			for (int j=i-1; j>i-segmentLength; j--){
 				if (cardArray[j].getGameValue() != cardArray[i].getGameValue()){
 					thisSegmentMatches = false;
 					break;
 				}
 			}
+			
+			// If all cards in current segment match assume true for segmentMatch first
 			if (thisSegmentMatches){
 				segmentMatch = true;
 			}
-			if(segmentMatch && i<cardArray.length-1){
+			
+			/*
+			 * If a potential match is found, then check if the card matches beyond the lower boundary
+			 * of the segment if they exist
+			 */
+			if (thisSegmentMatches && i-segmentLength>=0){
+				// If the card beyond the lower boundary also match, then the segment length is longer so we set false
+				if (cardArray[i].getGameValue() == cardArray[i-segmentLength].getGameValue()){
+					segmentMatch = false;
+				}
+			}
+			
+			/*
+			 * If a potential match is found check if cards match beyond the upper bound of the segment if they exist
+			 */
+			if (thisSegmentMatches && i<cardArray.length-1){
+				// If the card beyond the lower boundary also match, then the segment length is longer so we set false
 				if (cardArray[i].getGameValue() == cardArray[i+1].getGameValue()){
 					segmentMatch = false;
 				}
 			}
-			if(segmentMatch && (i-segmentLength)>cardArray.length+1){
-				if (cardArray[i-segmentLength].getGameValue() == cardArray[i-segmentLength-1].getGameValue()){
-					segmentMatch = false;
-				}
-			}
-			if(segmentMatch){
+			
+			// If the segment is a match, end the loop and return the boolean
+			if (segmentMatch){
 				break;
 			}
 		}
 		return segmentMatch;
 	}
 	
+	/**
+	 * Checks if the hand matches the criteria for a royal flush
+	 * ie. A,K,Q,J,10 of same suit 
+	 */
 	public boolean isRoyalFlush() {
-		return cardArray[0].getGameValue() == 14 && straightCards() && sameSuitCards();
+		// Check first card in array is an ace & sequential order & same suit 
+		return cardArray[0].getGameValue() == 14 && hasSequentialOrder() && hasAllSameSuit();
 	}
 	
+	/**
+	 * Checks if hand matches criteria for straight flush
+	 * ie. Not royal flush, cards of same suit in sequential order
+	 */
 	public boolean isStraightFlush() {
-		//Check for RoyalFlush first
+		
 		if (isRoyalFlush()){
 			return false;
 		}
-		return straightCards() && sameSuitCards();
+		return hasSequentialOrder() && hasAllSameSuit();
 	}
 	
+	/**
+	 * Checks if hand matches criteria for four of a kind
+	 * ie. there are 4 cards of equal game value in the hand
+	 */
 	public boolean isFourOfAKind() {
+		
 		return segmentMatch(4);
 	}
 	
+	/**
+	 * Checks if hand matches criteria for full house
+	 * ie. Cards contain 3 of a kind and an additional pair
+	 */
 	public boolean isFullHouse() {
+		
 		return segmentMatch(3) && segmentMatch(2);
+		
 	}
 	
-	public boolean isFlush(){
-		//First, check all hands that supersede this one 
-		if (isStraightFlush() || isRoyalFlush()){
+	/**
+	 * Checks if hand matches criteria for a simple flush
+	 * ie. Not straight flush or royal flush, cards are all of same suit
+	 */
+	public boolean isFlush() {
+		
+		if (isStraightFlush() || isRoyalFlush()) {
 			return false;
 		}
-		
-		return sameSuitCards();
+		return hasAllSameSuit();
 	}
 	
+	/**
+	 * Checks if hand matches criteria for a simple straight
+	 * ie. Not straight flush or royal flush, cards all in sequential order
+	 */
 	public boolean isStraight(){
-		//Check all hands that supersede this one 
+		
 		if (isStraightFlush() || isRoyalFlush()){
 			return false;
 		}
-		
-		return straightCards();
+		return hasSequentialOrder();
 	}
 	
+	/**
+	 * Checks if hand matches criteria for three of a kind
+	 * ie. Not a full house, contains exactly 3 matching cards
+	 */
 	public boolean isThreeOfAKind() {
-		//Check all hands that could supersede this one 
+		
 		if (isFullHouse()){
 			return false;
 		}
-		
 		return segmentMatch(3);
 	}
 	
+	/**
+	 * Checks if hand matches criteria for Two Pair
+	 * ie. hand contains two separate pairs of matching cards
+	 */
 	public boolean isTwoPair(){
 		//Check all hands that could supersede this one 
 		if (isFullHouse() || isFourOfAKind()){
@@ -180,14 +237,22 @@ public class HandOfCards {
 		return twoPair;
 	}
 	
+	/**
+	 * Checks if hand matches criteria for a pair hand
+	 * ie. Contains exactly one pair of matching cards
+	 */
 	public boolean isOnePair(){
-		//First, check all hands that could supersede this one 
+
 		if (isTwoPair() || isFullHouse()){
 			return false;
 		}
 		return segmentMatch(2);
 	}
 	
+	/**
+	 * Checks if hand is simply a high card hand
+	 * ie. matches none of the other hand types
+	 */
 	public boolean isHighHand(){
 		if (isRoyalFlush() || isStraightFlush() || isFourOfAKind() || isFullHouse() || isFlush() 
 				|| isStraight() || isThreeOfAKind() || isTwoPair() || isOnePair()){
@@ -198,6 +263,10 @@ public class HandOfCards {
 		}
 	}
 	
+	/**
+	 * Private method returns a string containing the hand type info
+	 * Useful for testing
+	 */
 	private String handType(){
 		String handType ="";
 		if (isRoyalFlush()){
@@ -233,31 +302,53 @@ public class HandOfCards {
 		return handType;
 	}
 	
+	/**
+	 * Sets the hand to a specific array of cards for testing
+	 */
 	private void setHand(PlayingCard[] newHand){
 		cardArray = newHand;
 		sort();
 	}
 	
+	/*
+	 * Simple test, prints 10000 random hands of cards with their identified hand type for visual testing
+	 * Hands should be sorted in descending order of game value with their correct hand type adjacent
+	 * Then tests and prints a royal flush, simple flush and straight flush
+	 */
 	public static void main(String[] args) throws InterruptedException {
 		DeckOfCards testDeck = new DeckOfCards();
 		HandOfCards testHand;
+		//Print 10000 random hands
 		for (int i=0; i<10000; i++){
 			testHand = new HandOfCards(testDeck);
 			System.out.println(testHand.toString() + testHand.handType());
-			testDeck.reset();
 			testDeck.shuffle();
+			testDeck.reset();
 		}
 		PlayingCard[] royalFlush = new PlayingCard[5];
 		for (int i=0; i<5; i++){
-			royalFlush[i] = new PlayingCard(PlayingCard.CARD_TYPES[(9+i)%13], PlayingCard.SUITS[0], PlayingCard.FACE_VALUES[(9+i)%13], PlayingCard.GAME_VALUES[(9+i)%13] );
+			royalFlush[i] = new PlayingCard(PlayingCard.CARD_TYPES[(9+i)%13], PlayingCard.SUITS[0], 
+					PlayingCard.FACE_VALUES[(9+i)%13], PlayingCard.GAME_VALUES[(9+i)%13] );
 		}
+		
+		//Set and print a royal flush
 		testHand = new HandOfCards(testDeck);
 		testHand.setHand(royalFlush);
+		System.out.println(testHand.toString()+ testHand.handType()); //Should print royal flush
 		
-		testHand.setHand(PlayingCard.newFullPack());
-		System.out.println(testHand.toString());
-	
-		//System.out.println(testHand.toString() + testHand.handType());
+		//Make it a simple flush and print
+		testHand.cardArray[0] = new PlayingCard(PlayingCard.CARD_TYPES[5], PlayingCard.SUITS[0], 
+				PlayingCard.FACE_VALUES[5], PlayingCard.GAME_VALUES[5]);
+		testHand.sort();
+		System.out.println(testHand.toString()+ testHand.handType()); //Should print flush
+		
+		//Make it a straight flush and print
+		testHand.cardArray[4] = new PlayingCard(PlayingCard.CARD_TYPES[8], PlayingCard.SUITS[0], 
+				PlayingCard.FACE_VALUES[8], PlayingCard.GAME_VALUES[8]);
+		testHand.sort();
+		System.out.println(testHand.toString()+ testHand.handType()); //Should print straight flush
+
+
 	}
 
 }
