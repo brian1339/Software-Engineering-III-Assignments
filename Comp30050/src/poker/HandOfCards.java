@@ -327,17 +327,95 @@ public class HandOfCards {
 		sort();
 	}
 	
-	public Playingcard[] segmentSort(){
+	/**
+	 * Returns array of cards with segment of matching cards with length equal
+	 * exactly to the input parameter brought to the front.
+	 * Used below in calculating game values of hands 
+	 */
+	private PlayingCard[] segmentSort(int segmentLength){
 		
+		PlayingCard[] segmentSortedCards = new PlayingCard[CARDS_HELD];
+		// Assume segment match is false first
+		boolean segmentMatch = false;
+		
+		// Check all possible end points of segments for the cardArray
+		for (int i=segmentLength-1; i<cardArray.length; i++){
+			boolean thisSegmentMatches = true;
+			
+			// Check if previous cards in segment ending at i are equal in game value to cardArray[i]
+			for (int j=i-1; j>i-segmentLength; j--){
+				if (cardArray[j].getGameValue() != cardArray[i].getGameValue()){
+					thisSegmentMatches = false;
+					break;
+				}
+			}
+			
+			// If all cards in current segment match assume true for segmentMatch first
+			if (thisSegmentMatches){
+				segmentMatch = true;
+			}
+			
+			/*
+			 * If a potential match is found, then check if the card matches beyond the lower boundary
+			 * of the segment if they exist
+			 */
+			if (thisSegmentMatches && i-segmentLength>=0){
+				// If the card beyond the lower boundary also match, then the segment length is longer so we set false
+				if (cardArray[i].getGameValue() == cardArray[i-segmentLength].getGameValue()){
+					segmentMatch = false;
+				}
+			}
+			
+			/*
+			 * If a potential match is found check if cards match beyond the upper bound of the segment if they exist
+			 */
+			if (thisSegmentMatches && i<cardArray.length-1){
+				// If the card beyond the lower boundary also match, then the segment length is longer so we set false
+				if (cardArray[i].getGameValue() == cardArray[i+1].getGameValue()){
+					segmentMatch = false;
+				}
+			}
+			
+			/*
+			 * If the card is a match, fill the segmentSortedCards first with the matching 
+			 * segment, then with the remaining cards in order
+			 */
+			if (segmentMatch){
+				int filledArrayIndex = 0; 
+				// First copy the cards which match into the array
+				for (int j = i-segmentLength; j<i; j++){
+					segmentSortedCards[filledArrayIndex] = cardArray[j];
+					filledArrayIndex++;
+				}
+				// Copy the cards of higher value into the array in order
+				for (int j=0; j< i-segmentLength; j++){
+					segmentSortedCards[filledArrayIndex] = cardArray[j];
+					filledArrayIndex++;
+				}
+				// Copy the cards of higher value into the array in order
+				for (int j = i; j < cardArray.length; j++){
+					segmentSortedCards[filledArrayIndex] = cardArray[j];
+					filledArrayIndex++;
+				}
+				break;
+			}
+		}
+		return segmentSortedCards;
 	}
 	
 	/**
-	 * Calculates the game value of the hand of cards.
-	 * Uses the official rules of poker that different
-	 * suits are neither better or worse than others. 
+	 * Calculates the game value of the hand of cards and returns as int.
+	 * 
+	 * Uses base 15 exponentials to differentiate card values within hands
+	 * as this will ensure no overlap of values between hands and hands with
+	 * higher card game values will return a higher hand game value.
+	 * 
+	 * Uses the official rules of poker that different suits are neither better 
+	 * or worse than others. 
 	 */
 	public int getGameValue(){
-		int gameValue;
+		int gameValue =0;
+		int exponentialBase = 15;
 		/*
 		 * If hand is royal flush, set to royal flush default.
 		 * All royal flushes are same value across suits according to
@@ -350,6 +428,7 @@ public class HandOfCards {
 		/*
 		 * If straight Flush, add the game value of the highest card from the 
 		 * sorted array to the default value.
+		 * All suits same value according to poker rules
 		 */
 		if(isStraightFlush()){
 			gameValue = STRAIGHT_FLUSH_DEFAULT;
@@ -357,32 +436,116 @@ public class HandOfCards {
 		}
 		
 		/*
-		 * If four of a kind, add the value of the 4 matching cards 
+		 * If four of a kind, add the game value of the 4 matching cards by 15^1
+		 * and add the value of the remaining card by 15^0 to the default value
 		 */
 		if(isFourOfAKind()){
 			gameValue = FOUR_OF_A_KIND_DEFAULT;
-			gameValue = 
+			PlayingCard[] segmentSorted = segmentSort(4);
+			gameValue += segmentSorted[0].getGameValue() * exponentialBase;
+			gameValue += segmentSorted[4].getGameValue();
 		}
+		
+		/*
+		 * If full house add to the default the game value of the 3 matching cards 
+		 * by 15^1 and add the game value of the remaining two matching cards by 15^0
+		 */
 		if(isFullHouse()){
-			handType = "Full House";
+			gameValue = FULL_HOUSE_DEFAULT;
+			PlayingCard[] segmentSorted = segmentSort(3);
+			gameValue += segmentSorted[0].getGameValue() * exponentialBase;
+			gameValue += segmentSorted[4].getGameValue();
 		}
+		
+		/*
+		 * For flush add to the default the values of the cards by their base 15 
+		 * exponentials according to their order in the sorted array
+		 */
 		if (isFlush()) {
-			handType = "Flush";
+			gameValue = FLUSH_DEFAULT;
+			for (int i=0; i<cardArray.length; i++){
+				gameValue += cardArray[cardArray.length-i].getGameValue() 
+						* Math.pow(exponentialBase, cardArray.length-i-1);
+			}
 		}
+		
+		/*
+		 * For simple straight, add the value of the largest card in the sorted 
+		 * array to the default value
+		 */
 		if (isStraight()){
-			handType = "Straight";
+			gameValue = STRAIGHT_DEFAULT;
+			gameValue += cardArray[0].getGameValue();
 		}
+		/*
+		 * For three of a kind add to the default the value of the matching cards by 15^2 and
+		 * the two remaining cards in order by 15^1 and 15^0 respectively
+		 */
 		if (isThreeOfAKind()) {
-			handType = "Three Of A Kind";
+			gameValue = THREE_OF_A_KIND_DEFAULT;
+			PlayingCard[] segmentSorted = segmentSort(3);
+			for (int i=2; i<cardArray.length; i++){
+				gameValue += cardArray[cardArray.length-i].getGameValue() 
+						* Math.pow(exponentialBase, cardArray.length-i-1);
+			}
 		}
+		
+		/*
+		 * For two pair, add to the default the value of the higher pair by 15^2, the lower pair
+		 * by 15^1 and the remaining card by 15^0
+		 */
 		if (isTwoPair()) {
-			handType = "Two Pair";
+			gameValue = TWO_PAIR_DEFAULT;
+			
+			// Ints to store game value of upper pair, lower pair and stray card respectively
+			int factorBase2 =0, factorBase1 =0, factorBase0 =0;
+			/*
+			 * 3 cases, stray unmatched card is at front middle or end of sorted array
+			 */
+			if (cardArray[0].getGameValue() != cardArray[1].getGameValue()){
+				factorBase2 = cardArray[1].getGameValue();
+				factorBase1 = cardArray[3].getGameValue();
+				factorBase0 = cardArray[0].getGameValue();
+			}
+			if (cardArray[2].getGameValue() != cardArray[3].getGameValue()){
+				factorBase2 = cardArray[0].getGameValue();
+				factorBase1 = cardArray[3].getGameValue();
+				factorBase0 = cardArray[2].getGameValue();
+			}
+			if (cardArray[3].getGameValue() != cardArray[4].getGameValue()){
+				factorBase2 = cardArray[0].getGameValue();
+				factorBase1 = cardArray[2].getGameValue();
+				factorBase0 = cardArray[4].getGameValue();
+			}
+			
+			gameValue += factorBase2 * Math.pow(exponentialBase, 2);
+			gameValue += factorBase1 * Math.pow(exponentialBase, 1);
+			gameValue += factorBase0 * Math.pow(exponentialBase, 0);
+			
 		}
+		/*
+		 * For 1 pair, add to the default value the value of the pair by 15^3 plus
+		 * the remaining cards in order by 15^2, 15^1 and 15^ 0 respectively
+		 */
 		if (isOnePair()) {
-			handType = "One Pair";
+			gameValue = ONE_PAIR_DEFAULT;
+			PlayingCard[] segmentSorted = segmentSort(2);
+			for (int i=1; i<cardArray.length; i++){
+				gameValue += cardArray[cardArray.length-i].getGameValue() 
+						* Math.pow(exponentialBase, cardArray.length-i-1);
+			}
+			
 		}
+		/*
+		 * For high hand, add to the default value the game values of the cards
+		 * multiplied in order by 15^4, 15^3, 15^2, 15^1 and 15^0 respectively
+		 */
 		if (isHighHand()){
-			handType = "High Hand";
+			gameValue = HIGH_HAND_DEFAULT;
+			for (int i=0; i<cardArray.length; i++){
+				gameValue += cardArray[cardArray.length-i].getGameValue() 
+						* Math.pow(exponentialBase, cardArray.length-i-1);
+			}
 		}
 	}
 	
