@@ -382,19 +382,23 @@ public class HandOfCards {
 			 */
 			if (segmentMatch){
 				int filledArrayIndex = 0; 
+				
 				// First copy the cards which match into the array
-				for (int j = i-segmentLength; j<i; j++){
+				for (int j = i-segmentLength+1; j<=i; j++){
 					segmentSortedCards[filledArrayIndex] = cardArray[j];
 					filledArrayIndex++;
 				}
+				
 				// Copy the cards of higher value into the array in order
-				for (int j=0; j< i-segmentLength; j++){
+				for (int j=0; j<= i-segmentLength; j++){
 					segmentSortedCards[filledArrayIndex] = cardArray[j];
 					filledArrayIndex++;
 				}
+				
 				// Copy the cards of higher value into the array in order
-				for (int j = i; j < cardArray.length; j++){
-					segmentSortedCards[filledArrayIndex] = cardArray[j];
+				for (int j = i+1; j < cardArray.length; j++){
+					PlayingCard temp = cardArray[j];
+					segmentSortedCards[filledArrayIndex] = temp;
 					filledArrayIndex++;
 				}
 				break;
@@ -464,7 +468,7 @@ public class HandOfCards {
 		if (isFlush()) {
 			gameValue = FLUSH_DEFAULT;
 			for (int i=0; i<cardArray.length; i++){
-				gameValue += cardArray[cardArray.length-i].getGameValue() 
+				gameValue += cardArray[i].getGameValue() 
 						* Math.pow(exponentialBase, cardArray.length-i-1);
 			}
 		}
@@ -484,9 +488,9 @@ public class HandOfCards {
 		if (isThreeOfAKind()) {
 			gameValue = THREE_OF_A_KIND_DEFAULT;
 			PlayingCard[] segmentSorted = segmentSort(3);
-			for (int i=2; i<cardArray.length; i++){
-				gameValue += cardArray[cardArray.length-i].getGameValue() 
-						* Math.pow(exponentialBase, cardArray.length-i-1);
+			for (int i=2; i<segmentSorted.length; i++){
+				gameValue += segmentSorted[i].getGameValue() 
+						* Math.pow(exponentialBase, segmentSorted.length-i-1);
 			}
 		}
 		
@@ -530,9 +534,9 @@ public class HandOfCards {
 		if (isOnePair()) {
 			gameValue = ONE_PAIR_DEFAULT;
 			PlayingCard[] segmentSorted = segmentSort(2);
-			for (int i=1; i<cardArray.length; i++){
-				gameValue += cardArray[cardArray.length-i].getGameValue() 
-						* Math.pow(exponentialBase, cardArray.length-i-1);
+			for (int i=1; i<segmentSorted.length; i++){
+				gameValue += segmentSorted[i].getGameValue() 
+						* Math.pow(exponentialBase, segmentSorted.length-i-1);
 			}
 			
 		}
@@ -543,10 +547,12 @@ public class HandOfCards {
 		if (isHighHand()){
 			gameValue = HIGH_HAND_DEFAULT;
 			for (int i=0; i<cardArray.length; i++){
-				gameValue += cardArray[cardArray.length-i].getGameValue() 
+				gameValue += cardArray[i].getGameValue() 
 						* Math.pow(exponentialBase, cardArray.length-i-1);
 			}
 		}
+		
+		return gameValue;
 	}
 	
 	/*
@@ -561,6 +567,7 @@ public class HandOfCards {
 		for (int i=0; i<10000; i++){
 			testHand = new HandOfCards(testDeck);
 			System.out.println(testHand.toString() + testHand.handType());
+			System.out.println(testHand.getGameValue());
 			testDeck.shuffle();
 			testDeck.reset();
 		}
