@@ -561,6 +561,7 @@ public class HandOfCards {
 	 * Then tests and prints a royal flush, simple flush and straight flush
 	 */
 	public static void main(String[] args) throws InterruptedException {
+		/*
 		DeckOfCards testDeck = new DeckOfCards();
 		HandOfCards testHand;
 		//Print 10000 random hands
@@ -593,8 +594,130 @@ public class HandOfCards {
 				PlayingCard.FACE_VALUES[8], PlayingCard.GAME_VALUES[8]);
 		testHand.sort();
 		System.out.println(testHand.toString()+ testHand.handType()); //Should print straight flush
+		*/
+		
+		// Generating cards of different suits in arrays to use for testing
+		PlayingCard [] aces, kings, queens, jacks, tens, nines, sixes, fives, fours, threes, twos;
+		
+		aces = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			aces[i] = new PlayingCard(PlayingCard.CARD_TYPES[0], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[0], PlayingCard.GAME_VALUES[0]);
+		}
+		
+		kings = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			kings[i] = new PlayingCard(PlayingCard.CARD_TYPES[12], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[12], PlayingCard.GAME_VALUES[12]);
+		}
+		
+		queens = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			queens[i] = new PlayingCard(PlayingCard.CARD_TYPES[11], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[11], PlayingCard.GAME_VALUES[11]);
+		}
+		
+		jacks = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			jacks[i] = new PlayingCard(PlayingCard.CARD_TYPES[10], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[10], PlayingCard.GAME_VALUES[10]);
+		}
+		
+		tens = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			tens[i] = new PlayingCard(PlayingCard.CARD_TYPES[9], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[9], PlayingCard.GAME_VALUES[9]);
+		}
+		
+		nines = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			nines[i] = new PlayingCard(PlayingCard.CARD_TYPES[8], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[8], PlayingCard.GAME_VALUES[8]);
+		}
+		
+		sixes = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			sixes[i] = new PlayingCard(PlayingCard.CARD_TYPES[5], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[5], PlayingCard.GAME_VALUES[5]);
+		}
+		
+		fives = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			fives[i] = new PlayingCard(PlayingCard.CARD_TYPES[4], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[4], PlayingCard.GAME_VALUES[4]);
+		}
+		
+		fours = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			fours[i] = new PlayingCard(PlayingCard.CARD_TYPES[3], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[3], PlayingCard.GAME_VALUES[3]);
+		}
+		
+		threes = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			threes[i] = new PlayingCard(PlayingCard.CARD_TYPES[2], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[2], PlayingCard.GAME_VALUES[2]);
+		}
+		
+		twos = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			twos[i] = new PlayingCard(PlayingCard.CARD_TYPES[1], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[1], PlayingCard.GAME_VALUES[1]);
+		}
+		
+		boolean boundaryTestSuccess = true;
+		
+		DeckOfCards testDeck = new DeckOfCards();
+		HandOfCards highHand = new HandOfCards(testDeck);
+		HandOfCards lowHand = new HandOfCards(testDeck);
+		/*
+		 * Testing royal flushes against high straight flushes, all suits tested
+		 */
+		System.out.println("\n\n~~~~~~~~~----------Royal Flush vs. Straight Flush Boundary Test----------~~~~~~~~~");
+		for (int i=0; i<4; i++){
+			PlayingCard[] royalFlush = {aces[i], kings[i], queens[i], jacks[i], tens[i]};
+			highHand.setHand(royalFlush);
+			for (int j=(i+1)%4; j!=i; j = (j+1)%4){
+				PlayingCard[] straightFlush = {kings[j], queens[j], jacks[j], tens[j], nines[j]};
+				lowHand.setHand(straightFlush);
+				if (highHand.getGameValue() <= lowHand.getGameValue()){
+					System.out.println("####### Boundary error: " + highHand.toString() + highHand.handType() 
+							+ " vs. " + lowHand.toString() + lowHand.handType());
+					boundaryTestSuccess = false;
+				}
+				else {
+					System.out.println("Boundary test success: "+ highHand.toString() + highHand.handType() 
+							+ " vs. " + lowHand.toString() + lowHand.handType());
+				}
+			}
+		}
+		
+		/*
+		 * Boundary test between low straight flush and high four of a kind
+		 */
 
-
+		System.out.println("\n\n~~~~~~~~~----------Straight Flush vs. Four of a Kind Boundary Test----------~~~~~~~~~");
+		for (int i =0; i<4; i++){
+			highHand.setHand(new PlayingCard[] {sixes[i], fives[i], fours[i], threes[i], twos[i]});
+			lowHand.setHand(new PlayingCard[] {aces[0], aces[1], aces[2], aces[3], kings[0]});
+			if (highHand.getGameValue() <= lowHand.getGameValue()){
+				System.out.println("####### Boundary error: " + highHand.toString() + highHand.handType() 
+						+ " vs. " + lowHand.toString() + lowHand.handType());
+				boundaryTestSuccess = false;
+			}
+			else {
+				System.out.println("Boundary test success: "+ highHand.toString() + highHand.handType() 
+						+ " vs. " + lowHand.toString() + lowHand.handType());
+			}
+		}
+		
+		
+		
+		
+		
+		if (boundaryTestSuccess){
+			System.out.println("### All Boundary tests between hands successful.");
+		}
 	}
 
 }
