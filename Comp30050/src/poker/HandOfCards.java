@@ -2,6 +2,23 @@ package poker;
 
 public class HandOfCards {
 	
+	/*
+	 * Static constant default values for the calculation of game values for hands
+	 */
+	public static final int ROYAL_FLUSH_DEFAULT = 1000000000;
+	public static final int STRAIGHT_FLUSH_DEFAULT = 900000000;
+	public static final int FOUR_OF_A_KIND_DEFAULT = 800000000;
+	public static final int FULL_HOUSE_DEFAULT = 700000000;
+	public static final int FLUSH_DEFAULT = 600000000;
+	public static final int STRAIGHT_DEFAULT = 500000000;
+	public static final int THREE_OF_A_KIND_DEFAULT = 400000000;
+	public static final int TWO_PAIR_DEFAULT = 300000000;
+	public static final int ONE_PAIR_DEFAULT = 200000000;
+	public static final int HIGH_HAND_DEFAULT = 100000000;
+	
+	/*
+	 * Internal fields of hand
+	 */
 	private static final int CARDS_HELD = 5;
 	private PlayingCard[] cardArray;
 	private DeckOfCards deck;
@@ -308,6 +325,10 @@ public class HandOfCards {
 	private void setHand(PlayingCard[] newHand){
 		cardArray = newHand;
 		sort();
+	}
+	
+	public int getGameValue(){
+		return 0;
 	}
 	
 	/*
