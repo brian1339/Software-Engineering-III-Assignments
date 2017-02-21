@@ -327,8 +327,63 @@ public class HandOfCards {
 		sort();
 	}
 	
+	public Playingcard[] segmentSort(){
+		
+	}
+	
+	/**
+	 * Calculates the game value of the hand of cards.
+	 * Uses the official rules of poker that different
+	 * suits are neither better or worse than others. 
+	 */
 	public int getGameValue(){
-		return 0;
+		int gameValue;
+		/*
+		 * If hand is royal flush, set to royal flush default.
+		 * All royal flushes are same value across suits according to
+		 * official rules of poker.
+		 */
+		if (isRoyalFlush()){
+			gameValue = ROYAL_FLUSH_DEFAULT;
+		}
+		
+		/*
+		 * If straight Flush, add the game value of the highest card from the 
+		 * sorted array to the default value.
+		 */
+		if(isStraightFlush()){
+			gameValue = STRAIGHT_FLUSH_DEFAULT;
+			gameValue += cardArray[0].getGameValue();
+		}
+		
+		/*
+		 * If four of a kind, add the value of the 4 matching cards 
+		 */
+		if(isFourOfAKind()){
+			gameValue = FOUR_OF_A_KIND_DEFAULT;
+			gameValue = 
+		}
+		if(isFullHouse()){
+			handType = "Full House";
+		}
+		if (isFlush()) {
+			handType = "Flush";
+		}
+		if (isStraight()){
+			handType = "Straight";
+		}
+		if (isThreeOfAKind()) {
+			handType = "Three Of A Kind";
+		}
+		if (isTwoPair()) {
+			handType = "Two Pair";
+		}
+		if (isOnePair()) {
+			handType = "One Pair";
+		}
+		if (isHighHand()){
+			handType = "High Hand";
+		}
 	}
 	
 	/*
