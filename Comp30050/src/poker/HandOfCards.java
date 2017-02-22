@@ -554,7 +554,8 @@ public class HandOfCards {
 	}
 	
 	/*
-	 * Tests all boundary cases between hands
+	 * Tests all boundary cases between game values hands and all 
+	 * other workings of the class work correctly
 	 */
 	private static boolean executeBoundaryTests() throws InterruptedException{
         boolean boundaryTestSuccess = true;
@@ -564,86 +565,87 @@ public class HandOfCards {
 		HandOfCards lowHand = new HandOfCards(testDeck);
 		
 		// Generating cards of different suits in arrays to use for testing
-				PlayingCard [] aces, kings, queens, jacks, tens, nines, eights, sevens, sixes, fives, fours, threes, twos;
-				
-				aces = new PlayingCard[4];
-				for (int i=0; i<4; i++){
-					aces[i] = new PlayingCard(PlayingCard.CARD_TYPES[0], PlayingCard.SUITS[i], 
-							PlayingCard.FACE_VALUES[0], PlayingCard.GAME_VALUES[0]);
-				}
-				
-				kings = new PlayingCard[4];
-				for (int i=0; i<4; i++){
-					kings[i] = new PlayingCard(PlayingCard.CARD_TYPES[12], PlayingCard.SUITS[i], 
-							PlayingCard.FACE_VALUES[12], PlayingCard.GAME_VALUES[12]);
-				}
-				
-				queens = new PlayingCard[4];
-				for (int i=0; i<4; i++){
-					queens[i] = new PlayingCard(PlayingCard.CARD_TYPES[11], PlayingCard.SUITS[i], 
-							PlayingCard.FACE_VALUES[11], PlayingCard.GAME_VALUES[11]);
-				}
-				
-				jacks = new PlayingCard[4];
-				for (int i=0; i<4; i++){
-					jacks[i] = new PlayingCard(PlayingCard.CARD_TYPES[10], PlayingCard.SUITS[i], 
-							PlayingCard.FACE_VALUES[10], PlayingCard.GAME_VALUES[10]);
-				}
-				
-				tens = new PlayingCard[4];
-				for (int i=0; i<4; i++){
-					tens[i] = new PlayingCard(PlayingCard.CARD_TYPES[9], PlayingCard.SUITS[i], 
-							PlayingCard.FACE_VALUES[9], PlayingCard.GAME_VALUES[9]);
-				}
-				
-				nines = new PlayingCard[4];
-				for (int i=0; i<4; i++){
-					nines[i] = new PlayingCard(PlayingCard.CARD_TYPES[8], PlayingCard.SUITS[i], 
-							PlayingCard.FACE_VALUES[8], PlayingCard.GAME_VALUES[8]);
-				}
-				
-				eights = new PlayingCard[4];
-				for (int i=0; i<4; i++){
-					eights[i] = new PlayingCard(PlayingCard.CARD_TYPES[7], PlayingCard.SUITS[i], 
-							PlayingCard.FACE_VALUES[7], PlayingCard.GAME_VALUES[7]);
-				}
-				
-				sevens = new PlayingCard[4];
-				for (int i=0; i<4; i++){
-					sevens[i] = new PlayingCard(PlayingCard.CARD_TYPES[6], PlayingCard.SUITS[i], 
-							PlayingCard.FACE_VALUES[6], PlayingCard.GAME_VALUES[6]);
-				}
-				
-				sixes = new PlayingCard[4];
-				for (int i=0; i<4; i++){
-					sixes[i] = new PlayingCard(PlayingCard.CARD_TYPES[5], PlayingCard.SUITS[i], 
-							PlayingCard.FACE_VALUES[5], PlayingCard.GAME_VALUES[5]);
-				}
-				
-				fives = new PlayingCard[4];
-				for (int i=0; i<4; i++){
-					fives[i] = new PlayingCard(PlayingCard.CARD_TYPES[4], PlayingCard.SUITS[i], 
-							PlayingCard.FACE_VALUES[4], PlayingCard.GAME_VALUES[4]);
-				}
-				
-				fours = new PlayingCard[4];
-				for (int i=0; i<4; i++){
-					fours[i] = new PlayingCard(PlayingCard.CARD_TYPES[3], PlayingCard.SUITS[i], 
-							PlayingCard.FACE_VALUES[3], PlayingCard.GAME_VALUES[3]);
-				}
-				
-				threes = new PlayingCard[4];
-				for (int i=0; i<4; i++){
-					threes[i] = new PlayingCard(PlayingCard.CARD_TYPES[2], PlayingCard.SUITS[i], 
-							PlayingCard.FACE_VALUES[2], PlayingCard.GAME_VALUES[2]);
-				}
-				
-				twos = new PlayingCard[4];
-				for (int i=0; i<4; i++){
-					twos[i] = new PlayingCard(PlayingCard.CARD_TYPES[1], PlayingCard.SUITS[i], 
-							PlayingCard.FACE_VALUES[1], PlayingCard.GAME_VALUES[1]);
-				}
-		
+		PlayingCard [] aces, kings, queens, jacks, tens, nines, 
+				eights, sevens, sixes, fives, fours, threes, twos;
+
+		aces = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			aces[i] = new PlayingCard(PlayingCard.CARD_TYPES[0], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[0], PlayingCard.GAME_VALUES[0]);
+		}
+
+		kings = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			kings[i] = new PlayingCard(PlayingCard.CARD_TYPES[12], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[12], PlayingCard.GAME_VALUES[12]);
+		}
+
+		queens = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			queens[i] = new PlayingCard(PlayingCard.CARD_TYPES[11], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[11], PlayingCard.GAME_VALUES[11]);
+		}
+
+		jacks = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			jacks[i] = new PlayingCard(PlayingCard.CARD_TYPES[10], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[10], PlayingCard.GAME_VALUES[10]);
+		}
+
+		tens = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			tens[i] = new PlayingCard(PlayingCard.CARD_TYPES[9], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[9], PlayingCard.GAME_VALUES[9]);
+		}
+
+		nines = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			nines[i] = new PlayingCard(PlayingCard.CARD_TYPES[8], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[8], PlayingCard.GAME_VALUES[8]);
+		}
+
+		eights = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			eights[i] = new PlayingCard(PlayingCard.CARD_TYPES[7], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[7], PlayingCard.GAME_VALUES[7]);
+		}
+
+		sevens = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			sevens[i] = new PlayingCard(PlayingCard.CARD_TYPES[6], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[6], PlayingCard.GAME_VALUES[6]);
+		}
+
+		sixes = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			sixes[i] = new PlayingCard(PlayingCard.CARD_TYPES[5], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[5], PlayingCard.GAME_VALUES[5]);
+		}
+
+		fives = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			fives[i] = new PlayingCard(PlayingCard.CARD_TYPES[4], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[4], PlayingCard.GAME_VALUES[4]);
+		}
+
+		fours = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			fours[i] = new PlayingCard(PlayingCard.CARD_TYPES[3], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[3], PlayingCard.GAME_VALUES[3]);
+		}
+
+		threes = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			threes[i] = new PlayingCard(PlayingCard.CARD_TYPES[2], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[2], PlayingCard.GAME_VALUES[2]);
+		}
+
+		twos = new PlayingCard[4];
+		for (int i=0; i<4; i++){
+			twos[i] = new PlayingCard(PlayingCard.CARD_TYPES[1], PlayingCard.SUITS[i], 
+					PlayingCard.FACE_VALUES[1], PlayingCard.GAME_VALUES[1]);
+		}
+
 		/*
 		 * Testing royal flushes against high straight flushes, all suits tested
 		 */
@@ -802,6 +804,10 @@ public class HandOfCards {
 		return boundaryTestSuccess;
 	}
 	
+	/*
+	 * Tests within hand types whether HandOfCards.getGameValue is reflecting the value
+	 * of the hands correctly and whether all other workings of the class work correctly
+	 */
 	private static boolean executeInnerTests() throws InterruptedException{
 		boolean innerTestsSuccess = true;
 		
@@ -890,6 +896,7 @@ public class HandOfCards {
 					PlayingCard.FACE_VALUES[1], PlayingCard.GAME_VALUES[1]);
 		}
 		
+		//Put all the cards in the array so sequential cards are easy to access from a loop
 		PlayingCard[][] allCards = {twos, threes, fours, fives, sixes, sevens, eights,
 				nines, tens, jacks, queens, kings, aces};
 
@@ -1283,51 +1290,12 @@ public class HandOfCards {
 	}
 	
 	/*
-	 * Simple test, prints 10000 random hands of cards with their identified hand type for visual testing
-	 * Hands should be sorted in descending order of game value with their correct hand type adjacent
-	 * Then tests and prints a royal flush, simple flush and straight flush
+	 * Executes boundary tests and inner hand tests and prints the test status 
+	 * in the terminal after
 	 */
 	public static void main(String[] args) throws InterruptedException {
-		/*
-		DeckOfCards testDeck = new DeckOfCards();
-		HandOfCards testHand;
-		//Print 10000 random hands
-		for (int i=0; i<10000; i++){
-			testHand = new HandOfCards(testDeck);
-			System.out.println(testHand.toString() + testHand.handType());
-			System.out.println(testHand.getGameValue());
-			testDeck.shuffle();
-			testDeck.reset();
-		}
-		PlayingCard[] royalFlush = new PlayingCard[5];
-		for (int i=0; i<5; i++){
-			royalFlush[i] = new PlayingCard(PlayingCard.CARD_TYPES[(9+i)%13], PlayingCard.SUITS[0], 
-					PlayingCard.FACE_VALUES[(9+i)%13], PlayingCard.GAME_VALUES[(9+i)%13] );
-		}
-		
-		//Set and print a royal flush
-		testHand = new HandOfCards(testDeck);
-		testHand.setHand(royalFlush);
-		System.out.println(testHand.toString()+ testHand.handType()); //Should print royal flush
-		
-		//Make it a simple flush and print
-		testHand.cardArray[0] = new PlayingCard(PlayingCard.CARD_TYPES[5], PlayingCard.SUITS[0], 
-				PlayingCard.FACE_VALUES[5], PlayingCard.GAME_VALUES[5]);
-		testHand.sort();
-		System.out.println(testHand.toString()+ testHand.handType()); //Should print flush
-		
-		//Make it a straight flush and print
-		testHand.cardArray[4] = new PlayingCard(PlayingCard.CARD_TYPES[8], PlayingCard.SUITS[0], 
-				PlayingCard.FACE_VALUES[8], PlayingCard.GAME_VALUES[8]);
-		testHand.sort();
-		System.out.println(testHand.toString()+ testHand.handType()); //Should print straight flush
-		*/
-		
 		
 		boolean boundaryTestSuccess = executeBoundaryTests();
-		
-		
-		// Inner Tests of hands compared to other hands of that type
 		
 		boolean innerTestsSuccess = executeInnerTests();
 	
