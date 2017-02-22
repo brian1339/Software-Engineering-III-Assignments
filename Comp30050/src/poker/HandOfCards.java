@@ -482,16 +482,14 @@ public class HandOfCards {
 			gameValue += cardArray[0].getGameValue();
 		}
 		/*
-		 * For three of a kind add to the default the value of the matching cards by 15^2 and
-		 * the two remaining cards in order by 15^1 and 15^0 respectively
+		 * For three of a kind add to the default the value of the matching cards
+		 * It is impossible to have two hands with the same three matching cards
+		 * so we ignore the remaining two cards
 		 */
 		if (isThreeOfAKind()) {
 			gameValue = THREE_OF_A_KIND_DEFAULT;
 			PlayingCard[] segmentSorted = segmentSort(3);
-			for (int i=2; i<segmentSorted.length; i++){
-				gameValue += segmentSorted[i].getGameValue() 
-						* Math.pow(exponentialBase, segmentSorted.length-i-1);
-			}
+			gameValue += segmentSorted[0].getGameValue();
 		}
 		
 		/*
@@ -504,19 +502,19 @@ public class HandOfCards {
 			// Ints to store game value of upper pair, lower pair and stray card respectively
 			int factorBase2 =0, factorBase1 =0, factorBase0 =0;
 			/*
-			 * 3 cases, stray unmatched card is at front middle or end of sorted array
+			 * 3 cases, stray unmatched card is at front, middle or end of sorted array
 			 */
 			if (cardArray[0].getGameValue() != cardArray[1].getGameValue()){
 				factorBase2 = cardArray[1].getGameValue();
 				factorBase1 = cardArray[3].getGameValue();
 				factorBase0 = cardArray[0].getGameValue();
 			}
-			if (cardArray[2].getGameValue() != cardArray[3].getGameValue()){
+			else if (cardArray[2].getGameValue() != cardArray[3].getGameValue()){
 				factorBase2 = cardArray[0].getGameValue();
 				factorBase1 = cardArray[3].getGameValue();
 				factorBase0 = cardArray[2].getGameValue();
 			}
-			if (cardArray[3].getGameValue() != cardArray[4].getGameValue()){
+			else if (cardArray[3].getGameValue() != cardArray[4].getGameValue()){
 				factorBase2 = cardArray[0].getGameValue();
 				factorBase1 = cardArray[2].getGameValue();
 				factorBase0 = cardArray[4].getGameValue();
@@ -934,6 +932,121 @@ public class HandOfCards {
 			if (highHand.getGameValue() <= lowHand.getGameValue()){
 				System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
 					+ " vs. " + lowHand.toString() + lowHand.handType());
+				innerTestsSuccess = false;
+			}
+			else {
+				System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
+						+ " vs. " + lowHand.toString() + lowHand.handType());
+			}
+		}
+
+		/*
+		 * Flush inner tests. Checks that each card in the flush has weighted value depending
+		 * on it's order
+		 */
+		System.out.println("\n\n~~~~~~~~~----------Flush Inner Test----------~~~~~~~~~");
+		
+		/*
+		 * Straight inner tests. Checks that straight hands of equal rank are the same and that increasing
+		 * rank of straight increases score
+		 */
+		System.out.println("\n\n~~~~~~~~~----------Straight Inner Test----------~~~~~~~~~");
+		//Test that straight hands of equal rank have same score
+		for (int i=0; i<allCards.length - 4; i++){
+			for (int j=0; j<4; j++){
+				highHand.setHand(new PlayingCard[] {allCards[i][j], allCards[i+1][j], allCards[i+2][j], 
+					allCards[i+3][j], allCards[i+4][(j+3)%4]});
+				lowHand.setHand(new PlayingCard[] {allCards[i][(j+1)%4], allCards[i+1][(j+1)%4], allCards[i+2][(j+1)%4], 
+					allCards[i+3][(j+1)%4], allCards[i+4][(j+2)%4]});
+				if (highHand.getGameValue() != lowHand.getGameValue()){
+					System.out.println("####### Inner Test Error (Not Equal):" + highHand.toString() + highHand.handType() 
+						+ " vs. " + lowHand.toString() + lowHand.handType());
+					innerTestsSuccess = false;
+				}
+				else {
+					System.out.println("Inner test success (equal) :"+ highHand.toString() + highHand.handType() 
+							+ " vs. " + lowHand.toString() + lowHand.handType());
+				}
+			}
+			System.out.println("");
+		}
+		
+		//Test all straight hands are better than straight hands of lower ranks
+		for (int i=1; i<allCards.length - 5; i++){
+			highHand.setHand(new PlayingCard[] {allCards[i][0], allCards[i+1][0], allCards[i+2][0], 
+				allCards[i+3][0], allCards[i+4][1]});
+			lowHand.setHand(new PlayingCard[] {allCards[i-1][0], allCards[i][0], allCards[i+1][0], 
+				allCards[i+2][0], allCards[i+3][1]});
+			if (highHand.getGameValue() <= lowHand.getGameValue()){
+				System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+				innerTestsSuccess = false;
+			}
+			else {
+				System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
+						+ " vs. " + lowHand.toString() + lowHand.handType());
+			}
+		}
+		
+		/*
+		 * Three of a Kind inner test. Checks that incrementing the three matched cards produces a
+		 * better score
+		 */
+		System.out.println("\n\n~~~~~~~~~----------Three of a Kind Inner Test----------~~~~~~~~~");
+		//Check that incrementing the 3 matched cards increases score
+		for (int i=1; i<allCards.length; i++){
+			highHand.setHand(new PlayingCard[] {allCards[i][0], allCards[i][1], allCards[i][2], allCards[(i+1)%13][0], allCards[(i+2)%13][1]});
+			lowHand.setHand(new PlayingCard[] {allCards[i-1][0], allCards[i-1][1], allCards[i-1][2], allCards[(i+1)%13][2], allCards[(i+2)%13][3]});
+			if (highHand.getGameValue() <= lowHand.getGameValue()){
+				System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
+						+ " vs. " + lowHand.toString() + lowHand.handType());
+				innerTestsSuccess = false;
+			}
+			else {
+				System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
+						+ " vs. " + lowHand.toString() + lowHand.handType());
+			}
+		}
+		
+		/*
+		 * Two Pair inner test. Checks that there is a weighted difference between the higher pair
+		 * the lower pair and the stray unmatched card
+		 */
+		System.out.println("\n\n~~~~~~~~~----------Two Pairs Inner Test----------~~~~~~~~~");
+		
+		// Check that the upper pair increases score more than the rest of the cards
+		highHand.setHand(new PlayingCard[] {fours[0], fours[1], threes[2], threes[3], fives[1]});
+		lowHand.setHand(new PlayingCard[] {threes[0], threes[1], twos[2], twos[3], aces[0]});
+		if (highHand.getGameValue() <= lowHand.getGameValue()){
+			System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+			innerTestsSuccess = false;
+		}
+		else {
+			System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+		}
+		
+		//Check that if the upper pair are the same, the middle increases score more than unmatched card
+		highHand.setHand(new PlayingCard[] {fours[0], fours[1], threes[2], threes[3], twos[1]});
+		lowHand.setHand(new PlayingCard[] {fours[2], fours[3], twos[2], twos[3], aces[0]});
+		if (highHand.getGameValue() <= lowHand.getGameValue()){
+			System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+			innerTestsSuccess = false;
+		}
+		else {
+			System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+		}
+		
+		//Check that the last unmatched card increases score when incremented
+		for (int i=3; i < allCards.length-1; i++){
+			highHand.setHand(new PlayingCard[] {fours[0], fours[1], threes[2], threes[3], allCards[(i+1)%13][1]});
+			lowHand.setHand(new PlayingCard[] {fours[2], fours[3], threes[0], threes[1], allCards[i][1]});
+			if (highHand.getGameValue() <= lowHand.getGameValue()){
+				System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
+						+ " vs. " + lowHand.toString() + lowHand.handType());
 				innerTestsSuccess = false;
 			}
 			else {
