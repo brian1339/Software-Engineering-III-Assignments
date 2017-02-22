@@ -695,7 +695,6 @@ public class HandOfCards {
 		/*
 		 * Boundary test between low straight flush and high four of a kind
 		 */
-
 		System.out.println("\n\n~~~~~~~~~----------Straight Flush vs. Four of a Kind Boundary Test----------~~~~~~~~~");
 		for (int i =0; i<4; i++){
 			highHand.setHand(new PlayingCard[] {sixes[i], fives[i], fours[i], threes[i], twos[i]});
@@ -711,8 +710,78 @@ public class HandOfCards {
 			}
 		}
 		
+		/*
+		 * Boundary test between low four of a kind and high full house
+		 */
+		System.out.println("\n\n~~~~~~~~~----------Four of a Kind vs. Full House Boundary Test----------~~~~~~~~~");
+		highHand.setHand(new PlayingCard[] {threes[0], twos[0], twos[1], twos[2], twos[3]});
+		lowHand.setHand(new PlayingCard[] {aces[0], aces[1], aces[2], kings[0], kings[1]});
+		if (highHand.getGameValue() <= lowHand.getGameValue()){
+			System.out.println("####### Boundary error: " + highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+			boundaryTestSuccess = false;
+		}
+		else {
+			System.out.println("Boundary test success: "+ highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+		}
 		
+		/*
+		 * Boundary test between low full house and high flush
+		 */
+		System.out.println("\n\n~~~~~~~~~----------Full House vs. Flush Boundary Test----------~~~~~~~~~");
+		highHand.setHand(new PlayingCard[] {threes[0], threes[1], twos[0], twos[1], twos[2]});
+		for (int i=0; i<4; i++){
+			lowHand.setHand(new PlayingCard[] {aces[i], kings[i], queens[i], jacks[i], nines[i]});
+			if (highHand.getGameValue() <= lowHand.getGameValue()){
+				System.out.println("####### Boundary error: " + highHand.toString() + highHand.handType() 
+						+ " vs. " + lowHand.toString() + lowHand.handType());
+				boundaryTestSuccess = false;
+			}
+			else {
+				System.out.println("Boundary test success: "+ highHand.toString() + highHand.handType() 
+						+ " vs. " + lowHand.toString() + lowHand.handType());
+			}
+		}
 		
+		/*
+		 * Boundary test between low flush and high straight
+		 */
+		System.out.println("\n\n~~~~~~~~~----------Full House vs. Flush Boundary Test----------~~~~~~~~~");
+		lowHand.setHand(new PlayingCard[] {aces[0], kings[0], queens[0], jacks[0], tens[1]});
+		for (int i=0; i<4; i++){
+			highHand.setHand(new PlayingCard[] {aces[i], kings[i], queens[i], jacks[i], nines[i]});
+			if (highHand.getGameValue() <= lowHand.getGameValue()){
+				System.out.println("####### Boundary error: " + highHand.toString() + highHand.handType() 
+						+ " vs. " + lowHand.toString() + lowHand.handType());
+				boundaryTestSuccess = false;
+			}
+			else {
+				System.out.println("Boundary test success: "+ highHand.toString() + highHand.handType() 
+						+ " vs. " + lowHand.toString() + lowHand.handType());
+			}
+		}
+		
+		/*
+		 * Boundary test between low straight and high three of a kind
+		 */
+		System.out.println("\n\n~~~~~~~~~----------Full House vs. Flush Boundary Test----------~~~~~~~~~");
+		highHand.setHand(new PlayingCard[] {threes[0], threes[1], twos[0], twos[1], twos[2]});
+		lowHand.setHand(new PlayingCard[] {aces[0], aces[1], aces[2], kings[0], queens[0]});
+		if (highHand.getGameValue() <= lowHand.getGameValue()){
+			System.out.println("####### Boundary error: " + highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+			boundaryTestSuccess = false;
+		}
+		else {
+			System.out.println("Boundary test success: "+ highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+		}
+		
+		/*
+		 * Boundary test between low three of a kind and high two pair
+		 */
+		System.out.println("\n\n~~~~~~~~~----------Full House vs. Flush Boundary Test----------~~~~~~~~~");
 		
 		
 		if (boundaryTestSuccess){
