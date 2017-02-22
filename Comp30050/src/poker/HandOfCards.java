@@ -1013,6 +1013,18 @@ public class HandOfCards {
 		 * the lower pair and the stray unmatched card
 		 */
 		System.out.println("\n\n~~~~~~~~~----------Two Pairs Inner Test----------~~~~~~~~~");
+		// Check pairs of different suits with equal ranking unmatched cards produce equal score 
+		highHand.setHand(new PlayingCard[] {fours[0], fours[1], threes[0], threes[1], twos[0]});
+		lowHand.setHand(new PlayingCard[] {fours[2], fours[3], threes[2], threes[3], twos[1]});
+		if (highHand.getGameValue() != lowHand.getGameValue()){
+			System.out.println("####### Inner Test Error (Not Equal):" + highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+			innerTestsSuccess = false;
+		}
+		else {
+			System.out.println("Inner test success (equal) :"+ highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+		}
 		
 		// Check that the upper pair increases score more than the rest of the cards
 		highHand.setHand(new PlayingCard[] {fours[0], fours[1], threes[2], threes[3], fives[1]});
@@ -1055,6 +1067,76 @@ public class HandOfCards {
 			}
 		}
 		
+		/*
+		 * One pair inner test. Checks there is a weighted difference between the matched pair 
+		 * and the remaining cards in order
+		 */
+		System.out.println("\n\n~~~~~~~~~----------One Pair Inner Test----------~~~~~~~~~");
+		
+		// Check pairs of different suits with equal ranking unmatched cards produce equal score 
+		highHand.setHand(new PlayingCard[] {fives[0], fours[0], threes[0], threes[1], twos[0]});
+		lowHand.setHand(new PlayingCard[] {fives[1], fours[1], threes[2], threes[3], twos[1]});
+		if (highHand.getGameValue() != lowHand.getGameValue()){
+			System.out.println("####### Inner Test Error (Not Equal):" + highHand.toString() + highHand.handType() 
+				+ " vs. " + lowHand.toString() + lowHand.handType());
+			innerTestsSuccess = false;
+		}
+		else {
+			System.out.println("Inner test success (equal) :"+ highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+		}
+		
+		// Check weighted difference between matched pairs of cards
+		highHand.setHand(new PlayingCard[] {fives[0], fours[0], threes[0], threes[1], twos[0]});
+		lowHand.setHand(new PlayingCard[]  {aces[0], kings[0], queens[0], twos[0], twos[0]});
+		if (highHand.getGameValue() <= lowHand.getGameValue()){
+			System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+			innerTestsSuccess = false;
+		}
+		else {
+			System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+		}
+		
+		// Check weighted difference of highest ranking unmatched card
+		highHand.setHand(new PlayingCard[] {sixes[0], fours[0], threes[0], twos[0], twos[1]});
+		lowHand.setHand(new PlayingCard[] {fives[0], fours[1], threes[1], twos[2], twos[3]});
+		if (highHand.getGameValue() <= lowHand.getGameValue()){
+			System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+			innerTestsSuccess = false;
+		}
+		else {
+			System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+		}
+		
+		// Check weighted difference of second highest ranking unmatched card
+		highHand.setHand(new PlayingCard[] {sixes[0], fives[0], threes[0], twos[0], twos[1]});
+		lowHand.setHand(new PlayingCard[] {sixes[1], fours[0], threes[1], twos[2], twos[3]});
+		if (highHand.getGameValue() <= lowHand.getGameValue()){
+			System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+			innerTestsSuccess = false;
+		}
+		else {
+			System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+		}
+		
+		// Check weighted difference of lowest ranking unmatched card
+		highHand.setHand(new PlayingCard[] {sixes[0], fives[0], fours[0], twos[0], twos[1]});
+		lowHand.setHand(new PlayingCard[] {sixes[1], fives[1], threes[0], twos[2], twos[3]});
+		if (highHand.getGameValue() <= lowHand.getGameValue()){
+			System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+			innerTestsSuccess = false;
+		}
+		else {
+			System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+		}
 		
 		if (boundaryTestSuccess){
 			System.out.println("### All Boundary tests between hands successful.");
