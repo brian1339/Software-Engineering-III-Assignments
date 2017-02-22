@@ -452,13 +452,13 @@ public class HandOfCards {
 		
 		/*
 		 * If full house add to the default the game value of the 3 matching cards 
-		 * by 15^1 and add the game value of the remaining two matching cards by 15^0
+		 * There can never be two full houses with the same 3 matching cards so 
+		 * we ignore the 2 matched cards
 		 */
 		if(isFullHouse()){
 			gameValue = FULL_HOUSE_DEFAULT;
 			PlayingCard[] segmentSorted = segmentSort(3);
-			gameValue += segmentSorted[0].getGameValue() * exponentialBase;
-			gameValue += segmentSorted[4].getGameValue();
+			gameValue += segmentSorted[0].getGameValue();
 		}
 		
 		/*
@@ -894,7 +894,7 @@ public class HandOfCards {
 				allCards[i+3][0], allCards[i+4][0]});
 			lowHand.setHand(new PlayingCard[] {allCards[i-1][0], allCards[i][0], allCards[i+1][0], 
 				allCards[i+2][0], allCards[i+3][0]});
-			if (highHand.getGameValue() > lowHand.getGameValue()){
+			if (highHand.getGameValue() <= lowHand.getGameValue()){
 				System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
 					+ " vs. " + lowHand.toString() + lowHand.handType());
 				innerTestsSuccess = false;
@@ -905,6 +905,42 @@ public class HandOfCards {
 			}
 		}
 		
+		/*
+		 * Four of a Kind Inner Tests. Checks that incrementing the matched cards produces higher score
+		 */
+		System.out.println("\n\n~~~~~~~~~----------Four of a Kind Inner Test----------~~~~~~~~~");
+		for (int i=1; i<allCards.length; i++){
+			highHand.setHand(new PlayingCard[] {allCards[i][0], allCards[i][1], allCards[i][2], allCards[i][3], allCards[(i+1)%13][0]});
+			lowHand.setHand(new PlayingCard[] {allCards[i-1][0], allCards[i-1][1], allCards[i-1][2], allCards[i-1][3], allCards[(i+1)%13][0]});
+			if (highHand.getGameValue() <= lowHand.getGameValue()){
+				System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+				innerTestsSuccess = false;
+			}
+			else {
+				System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
+						+ " vs. " + lowHand.toString() + lowHand.handType());
+			}
+		}
+		
+		/*
+		 * Full House Inner Tests. Checks that incrementing the 3 matched cards produces higher score
+		 */
+		System.out.println("\n\n~~~~~~~~~----------Full House Inner Test----------~~~~~~~~~");
+		//Check that incrementing the 3 matched cards increases score
+		for (int i=1; i<allCards.length; i++){
+			highHand.setHand(new PlayingCard[] {allCards[i][0], allCards[i][1], allCards[i][2], allCards[(i+1)%13][0], allCards[(i+1)%13][1]});
+			lowHand.setHand(new PlayingCard[] {allCards[i-1][0], allCards[i-1][1], allCards[i-1][2], allCards[(i+1)%13][2], allCards[(i+1)%13][3]});
+			if (highHand.getGameValue() <= lowHand.getGameValue()){
+				System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+				innerTestsSuccess = false;
+			}
+			else {
+				System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
+						+ " vs. " + lowHand.toString() + lowHand.handType());
+			}
+		}
 		
 		
 		if (boundaryTestSuccess){
