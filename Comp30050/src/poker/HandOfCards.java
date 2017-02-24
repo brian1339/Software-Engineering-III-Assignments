@@ -70,16 +70,41 @@ public class HandOfCards {
 	 * Checks whether cards are in sequential order ie. they all decrement in gameValue by 1 as we 
 	 * go along the sorted array.
 	 * This saves a lot of code repeat in our public boolean hand checks below
+	 * 
+	 * Fixed to include Ace low sequences 
 	 */
 	private boolean hasSequentialOrder(){
 		boolean sequentialCards = true;
+		
+		// Check for decrementing gameValues along the array
 		for (int i=1; i<cardArray.length; i++){
 			if (cardArray[i].getGameValue() != cardArray[i-1].getGameValue()-1){
 				sequentialCards = false;
 			}
 		}
+		
+		// If we don't have sequential cards by game value, we check for an ace low sequence
+		if (!sequentialCards){
+			sequentialCards = hasAceLowSequence();
+		}
+		
 		return sequentialCards;
 	}
+	
+	/**
+	 * Checks if there is an ace low sequence of cards based on face value
+	 * ie. cardArray contains A,5,4,3,2 of any suit
+	 */
+	private boolean hasAceLowSequence() {
+		boolean aceLowSequence = true;
+		for(int i=1; i<cardArray.length+1; i++){
+			if (cardArray[i-1].getFaceValue() != cardArray[i%cardArray.length].getFaceValue()-1){
+				aceLowSequence = false;
+			}
+		}
+		return aceLowSequence;
+	}
+	
 	
 	/**
 	 * Checks whether all cards in the array are the same suit
@@ -158,7 +183,7 @@ public class HandOfCards {
 	 */
 	public boolean isRoyalFlush() {
 		// Check first card in array is an ace & sequential order & same suit 
-		return cardArray[0].getGameValue() == 14 && hasSequentialOrder() && hasAllSameSuit();
+		return cardArray[0].getGameValue() == 14 && hasSequentialOrder() && hasAllSameSuit() && !hasAceLowSequence();
 	}
 	
 	/**
@@ -436,7 +461,14 @@ public class HandOfCards {
 		 */
 		if(isStraightFlush()){
 			gameValue = STRAIGHT_FLUSH_DEFAULT;
-			gameValue += cardArray[0].getGameValue();
+			if (hasAceLowSequence()){
+				// Ace is low in straight so we add the high card's game Value
+				gameValue+= cardArray[1].getGameValue(); 
+			}
+			else{
+				// Add highest gamevalue in the array
+				gameValue += cardArray[0].getGameValue();
+			}
 		}
 		
 		/*
@@ -479,7 +511,15 @@ public class HandOfCards {
 		 */
 		if (isStraight()){
 			gameValue = STRAIGHT_DEFAULT;
-			gameValue += cardArray[0].getGameValue();
+			
+			if (hasAceLowSequence()){
+				// Ace is low in straight so we add the high card's game Value
+				gameValue+= cardArray[1].getGameValue(); 
+			}
+			else{
+				// Add highest gamevalue in the array
+				gameValue += cardArray[0].getGameValue();
+			}
 		}
 		/*
 		 * For three of a kind add to the default the value of the matching cards
@@ -583,6 +623,25 @@ public class HandOfCards {
 		}
 		
 		return bustedFlush;
+	}
+	
+	/**
+	 * Returns whether the hand is a broken straight
+	 * ie. The cards are all in sequential order like a straight but one 
+	 */
+	public boolean isBrokenStraight(){
+		boolean brokenStraight = false;
+		
+		//Check each card of the array has decrementing value from the one previous
+		for (int i=0; i<cardArray.length-1; i++){
+			
+			if (cardArray[i+1].getGameValue() != cardArray[i].getGameValue()-1){
+				brokenStraight = true;
+				
+			}
+		}
+		//TODO
+		return brokenStraight;
 	}
 	
 	/**
@@ -1317,6 +1376,9 @@ public class HandOfCards {
 						+ " vs. " + lowHand.toString() + lowHand.handType());
 			}
 		}
+
+		lowHand.setHand(new PlayingCard[] {aces[0], kings[1], queens[0], jacks[0], nines[0]});
+		System.out.println("isBustedFlush test: " + lowHand.isBustedFlush());
 		
 		return innerTestsSuccess;
 	}
@@ -1328,9 +1390,8 @@ public class HandOfCards {
 	public static void main(String[] args) throws InterruptedException {
 		
 		boolean boundaryTestSuccess = executeBoundaryTests();
-		
 		boolean innerTestsSuccess = executeInnerTests();
-	
+		
 		
 		if (boundaryTestSuccess){
 			System.out.println("### All Boundary tests between hands successful.");
@@ -1344,6 +1405,7 @@ public class HandOfCards {
 		else {
 			System.out.println("XXX Inner test(s) failed, please check terminal above for failures");
 		}
+		
 	}
 
 }
