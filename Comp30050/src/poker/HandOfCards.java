@@ -97,8 +97,8 @@ public class HandOfCards {
 	 */
 	private boolean hasAceLowSequence() {
 		boolean aceLowSequence = true;
-		for(int i=1; i<cardArray.length+1; i++){
-			if (cardArray[i-1].getFaceValue() != cardArray[i%cardArray.length].getFaceValue()-1){
+		for(int i=1; i<cardArray.length; i++){
+			if (cardArray[i].getFaceValue()-1 != cardArray[(i+1)%cardArray.length].getFaceValue()){
 				aceLowSequence = false;
 			}
 		}
@@ -763,7 +763,7 @@ public class HandOfCards {
 		 */
 		System.out.println("\n\n~~~~~~~~~----------Straight Flush vs. Four of a Kind Boundary Test----------~~~~~~~~~");
 		for (int i =0; i<4; i++){
-			highHand.setHand(new PlayingCard[] {sixes[i], fives[i], fours[i], threes[i], twos[i]});
+			highHand.setHand(new PlayingCard[] {aces[i], fives[i], fours[i], threes[i], twos[i]});
 			lowHand.setHand(new PlayingCard[] {aces[0], aces[1], aces[2], aces[3], kings[0]});
 			if (highHand.getGameValue() <= lowHand.getGameValue()){
 				System.out.println("####### Boundary error: " + highHand.toString() + highHand.handType() 
@@ -832,7 +832,7 @@ public class HandOfCards {
 		 * Boundary test between low straight and high three of a kind
 		 */
 		System.out.println("\n\n~~~~~~~~~----------Straight vs. Three of a Kind Boundary Test----------~~~~~~~~~");
-		highHand.setHand(new PlayingCard[] {threes[0], threes[1], twos[0], twos[1], twos[2]});
+		highHand.setHand(new PlayingCard[] {aces[3], fives[1], fours[0], threes[1], twos[2]});
 		lowHand.setHand(new PlayingCard[] {aces[0], aces[1], aces[2], kings[0], queens[0]});
 		if (highHand.getGameValue() <= lowHand.getGameValue()){
 			System.out.println("####### Boundary error: " + highHand.toString() + highHand.handType() 
@@ -1031,6 +1031,19 @@ public class HandOfCards {
 					System.out.println("Inner test success (equal) :"+ highHand.toString() + highHand.handType() 
 							+ " vs. " + lowHand.toString() + lowHand.handType());
 				}
+			}
+			// Test ace low straight flush game value versus twos low straight flush
+			System.out.println("Low Ace test:");
+			highHand.setHand(new PlayingCard[] {sixes[0], fives[0], fours[0], threes[0], twos[0]});
+			lowHand.setHand(new PlayingCard[] {aces[1], fives[1], fours[1], threes[1], twos[1]});
+			if (highHand.getGameValue() <= lowHand.getGameValue()){
+				System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+				innerTestsSuccess = false;
+			}
+			else {
+				System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
+						+ " vs. " + lowHand.toString() + lowHand.handType());
 			}
 			System.out.println("");
 		}
@@ -1383,6 +1396,48 @@ public class HandOfCards {
 		return innerTestsSuccess;
 	}
 	
+	/**
+	 * Tests the has ace low sequence method
+	 * @return true if tests all pass and method functions correctly 
+	 * @throws InterruptedException 
+	 */
+	private static boolean testHasAceLowSequence() throws InterruptedException {
+		boolean testSuccess = true;
+		
+		System.out.println("----------test for hasAceLowSequence() method---------");
+		
+		PlayingCard ace, six, five, four, three, two;
+		DeckOfCards testDeck = new DeckOfCards();
+		HandOfCards testHand = new HandOfCards(testDeck);
+		
+		ace = new PlayingCard(PlayingCard.CARD_TYPES[0], PlayingCard.SUITS[0], 
+				PlayingCard.FACE_VALUES[0], PlayingCard.GAME_VALUES[0]);
+		two = new PlayingCard(PlayingCard.CARD_TYPES[1], PlayingCard.SUITS[0], 
+				PlayingCard.FACE_VALUES[1], PlayingCard.GAME_VALUES[1]);
+		three = new PlayingCard(PlayingCard.CARD_TYPES[2], PlayingCard.SUITS[0], 
+				PlayingCard.FACE_VALUES[2], PlayingCard.GAME_VALUES[2]);
+		four = new PlayingCard(PlayingCard.CARD_TYPES[3], PlayingCard.SUITS[0], 
+				PlayingCard.FACE_VALUES[3], PlayingCard.GAME_VALUES[3]);
+		five = new PlayingCard(PlayingCard.CARD_TYPES[4], PlayingCard.SUITS[0], 
+				PlayingCard.FACE_VALUES[4], PlayingCard.GAME_VALUES[4]);
+		six = new PlayingCard(PlayingCard.CARD_TYPES[5], PlayingCard.SUITS[0], 
+				PlayingCard.FACE_VALUES[5], PlayingCard.GAME_VALUES[5]);
+		
+		testHand.setHand(new PlayingCard[] {ace, five, four, three, two});
+		System.out.println(testHand.toString() + testHand.hasAceLowSequence() + ", EXPECTED: true");
+		if (!testHand.hasAceLowSequence()){
+			System.out.println("####### Failed test above");
+			testSuccess =  false;
+		}
+		testHand.setHand(new PlayingCard[] {six, five, four, three, two});
+		System.out.println(testHand.toString() + testHand.hasAceLowSequence() + ", EXPECTED: false");
+		if (testHand.hasAceLowSequence()){
+			System.out.println("####### Failed test above");
+			testSuccess =  false;
+		}
+		return testSuccess;
+	}
+	
 	/*
 	 * Executes boundary tests and inner hand tests and prints the test status 
 	 * in the terminal after
@@ -1405,6 +1460,8 @@ public class HandOfCards {
 		else {
 			System.out.println("XXX Inner test(s) failed, please check terminal above for failures");
 		}
+		
+		testHasAceLowSequence();
 		
 	}
 
