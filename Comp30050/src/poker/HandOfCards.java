@@ -821,7 +821,8 @@ public class HandOfCards {
 		System.out.println("\n\n~~~~~~~~~----------Royal Flush Inner Test----------~~~~~~~~~");
 		for (int i=0; i<4; i++){
 			highHand.setHand(new PlayingCard[] {aces[i], kings[i], queens[i], jacks[i], tens[i]});
-			lowHand.setHand(new PlayingCard[] {aces[(i+1)%4], kings[(i+1)%4], queens[(i+1)%4], jacks[(i+1)%4], tens[(i+1)%4]});
+			lowHand.setHand(new PlayingCard[] {aces[(i+1)%4], kings[(i+1)%4], queens[(i+1)%4], 
+					jacks[(i+1)%4], tens[(i+1)%4]});
 
 			if (!testHandsEqual(highHand, lowHand, testType)){
 				innerTestsSuccess = false;
@@ -838,8 +839,8 @@ public class HandOfCards {
 			for (int j=0; j<4; j++){
 				highHand.setHand(new PlayingCard[] {allCards[i][j], allCards[i+1][j], allCards[i+2][j], 
 					allCards[i+3][j], allCards[i+4][j]});
-				lowHand.setHand(new PlayingCard[] {allCards[i][(j+1)%4], allCards[i+1][(j+1)%4], allCards[i+2][(j+1)%4], 
-					allCards[i+3][(j+1)%4], allCards[i+4][(j+1)%4]});
+				lowHand.setHand(new PlayingCard[] {allCards[i][(j+1)%4], allCards[i+1][(j+1)%4], 
+						allCards[i+2][(j+1)%4], allCards[i+3][(j+1)%4], allCards[i+4][(j+1)%4]});
 
 				if (!testHandsEqual(highHand, lowHand, testType)){
 					innerTestsSuccess = false;
@@ -874,8 +875,10 @@ public class HandOfCards {
 		 */
 		System.out.println("\n\n~~~~~~~~~----------Four of a Kind Inner Test----------~~~~~~~~~");
 		for (int i=1; i<allCards.length; i++){
-			highHand.setHand(new PlayingCard[] {allCards[i][0], allCards[i][1], allCards[i][2], allCards[i][3], allCards[(i+1)%13][0]});
-			lowHand.setHand(new PlayingCard[] {allCards[i-1][0], allCards[i-1][1], allCards[i-1][2], allCards[i-1][3], allCards[(i+1)%13][0]});
+			highHand.setHand(new PlayingCard[] {allCards[i][0], allCards[i][1], allCards[i][2],
+					allCards[i][3], allCards[(i+1)%13][0]});
+			lowHand.setHand(new PlayingCard[] {allCards[i-1][0], allCards[i-1][1], allCards[i-1][2], 
+					allCards[i-1][3], allCards[(i+1)%13][0]});
 
 			if (!testHandGreaterThan(highHand, lowHand, testType)){
 				innerTestsSuccess = false;
@@ -888,8 +891,10 @@ public class HandOfCards {
 		System.out.println("\n\n~~~~~~~~~----------Full House Inner Test----------~~~~~~~~~");
 		//Check that incrementing the 3 matched cards increases score
 		for (int i=1; i<allCards.length; i++){
-			highHand.setHand(new PlayingCard[] {allCards[i][0], allCards[i][1], allCards[i][2], allCards[(i+1)%13][0], allCards[(i+1)%13][1]});
-			lowHand.setHand(new PlayingCard[] {allCards[i-1][0], allCards[i-1][1], allCards[i-1][2], allCards[(i+1)%13][2], allCards[(i+1)%13][3]});
+			highHand.setHand(new PlayingCard[] {allCards[i][0], allCards[i][1], allCards[i][2],
+					allCards[(i+1)%13][0], allCards[(i+1)%13][1]});
+			lowHand.setHand(new PlayingCard[] {allCards[i-1][0], allCards[i-1][1], allCards[i-1][2],
+					allCards[(i+1)%13][2], allCards[(i+1)%13][3]});
 			
 			if (!testHandGreaterThan(highHand, lowHand, testType)){
 				innerTestsSuccess = false;
@@ -948,8 +953,8 @@ public class HandOfCards {
 			for (int j=0; j<4; j++){
 				highHand.setHand(new PlayingCard[] {allCards[i][j], allCards[i+1][j], allCards[i+2][j], 
 					allCards[i+3][j], allCards[i+4][(j+3)%4]});
-				lowHand.setHand(new PlayingCard[] {allCards[i][(j+1)%4], allCards[i+1][(j+1)%4], allCards[i+2][(j+1)%4], 
-					allCards[i+3][(j+1)%4], allCards[i+4][(j+2)%4]});
+				lowHand.setHand(new PlayingCard[] {allCards[i][(j+1)%4], allCards[i+1][(j+1)%4], 
+						allCards[i+2][(j+1)%4], allCards[i+3][(j+1)%4], allCards[i+4][(j+2)%4]});
 
 				if (!testHandsEqual(highHand, lowHand, testType)){
 					innerTestsSuccess = false;
@@ -976,8 +981,10 @@ public class HandOfCards {
 		System.out.println("\n\n~~~~~~~~~----------Three of a Kind Inner Test----------~~~~~~~~~");
 		//Check that incrementing the 3 matched cards increases score
 		for (int i=1; i<allCards.length; i++){
-			highHand.setHand(new PlayingCard[] {allCards[i][0], allCards[i][1], allCards[i][2], allCards[(i+1)%13][0], allCards[(i+2)%13][1]});
-			lowHand.setHand(new PlayingCard[] {allCards[i-1][0], allCards[i-1][1], allCards[i-1][2], allCards[(i+1)%13][2], allCards[(i+2)%13][3]});
+			highHand.setHand(new PlayingCard[] {allCards[i][0], allCards[i][1], allCards[i][2], 
+					allCards[(i+1)%13][0], allCards[(i+2)%13][1]});
+			lowHand.setHand(new PlayingCard[] {allCards[i-1][0], allCards[i-1][1], allCards[i-1][2], 
+					allCards[(i+1)%13][2], allCards[(i+2)%13][3]});
 			if (!testHandGreaterThan(highHand, lowHand, testType)){
 				innerTestsSuccess = false;
 			}
