@@ -651,6 +651,7 @@ public class HandOfCards {
 	private static boolean executeBoundaryTests(PlayingCard[][] allCards) throws InterruptedException{
         boolean boundaryTestSuccess = true;
 		
+        // Testing equipment
 		DeckOfCards testDeck = new DeckOfCards();
 		HandOfCards highHand = new HandOfCards(testDeck);
 		HandOfCards lowHand = new HandOfCards(testDeck);
@@ -669,6 +670,8 @@ public class HandOfCards {
 		threes = allCards[1];
 		twos = allCards[0];
 		
+		// String for print statements
+		String testType = "Boundary test";
 
 		/*
 		 * Testing royal flushes against high straight flushes, all suits tested
@@ -679,14 +682,9 @@ public class HandOfCards {
 			for (int j=(i+1)%4; j!=i; j = (j+1)%4){
 				PlayingCard[] straightFlush = {kings[j], queens[j], jacks[j], tens[j], nines[j]};
 				lowHand.setHand(straightFlush);
-				if (highHand.getGameValue() <= lowHand.getGameValue()){
-					System.out.println("####### Boundary error: " + highHand.toString() + highHand.handType() 
-							+ " vs. " + lowHand.toString() + lowHand.handType());
+				
+				if (!testHandGreaterThan(highHand, lowHand, testType)){
 					boundaryTestSuccess = false;
-				}
-				else {
-					System.out.println("Boundary test success: "+ highHand.toString() + highHand.handType() 
-							+ " vs. " + lowHand.toString() + lowHand.handType());
 				}
 			}
 		}
@@ -698,14 +696,9 @@ public class HandOfCards {
 		for (int i =0; i<4; i++){
 			highHand.setHand(new PlayingCard[] {aces[i], fives[i], fours[i], threes[i], twos[i]});
 			lowHand.setHand(new PlayingCard[] {aces[0], aces[1], aces[2], aces[3], kings[0]});
-			if (highHand.getGameValue() <= lowHand.getGameValue()){
-				System.out.println("####### Boundary error: " + highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
+
+			if (!testHandGreaterThan(highHand, lowHand, testType)){
 				boundaryTestSuccess = false;
-			}
-			else {
-				System.out.println("Boundary test success: "+ highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
 			}
 		}
 		
@@ -715,14 +708,9 @@ public class HandOfCards {
 		System.out.println("\n\n~~~~~~~~~----------Four of a Kind vs. Full House Boundary Test----------~~~~~~~~~");
 		highHand.setHand(new PlayingCard[] {threes[0], twos[0], twos[1], twos[2], twos[3]});
 		lowHand.setHand(new PlayingCard[] {aces[0], aces[1], aces[2], kings[0], kings[1]});
-		if (highHand.getGameValue() <= lowHand.getGameValue()){
-			System.out.println("####### Boundary error: " + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+
+		if (!testHandGreaterThan(highHand, lowHand, testType)){
 			boundaryTestSuccess = false;
-		}
-		else {
-			System.out.println("Boundary test success: "+ highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
 		}
 		
 		/*
@@ -732,14 +720,9 @@ public class HandOfCards {
 		highHand.setHand(new PlayingCard[] {threes[0], threes[1], twos[0], twos[1], twos[2]});
 		for (int i=0; i<4; i++){
 			lowHand.setHand(new PlayingCard[] {aces[i], kings[i], queens[i], jacks[i], nines[i]});
-			if (highHand.getGameValue() <= lowHand.getGameValue()){
-				System.out.println("####### Boundary error: " + highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
+
+			if (!testHandGreaterThan(highHand, lowHand, testType)){
 				boundaryTestSuccess = false;
-			}
-			else {
-				System.out.println("Boundary test success: "+ highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
 			}
 		}
 		
@@ -750,14 +733,9 @@ public class HandOfCards {
 		lowHand.setHand(new PlayingCard[] {aces[0], kings[0], queens[0], jacks[0], tens[1]});
 		for (int i=0; i<4; i++){
 			highHand.setHand(new PlayingCard[] {aces[i], kings[i], queens[i], jacks[i], nines[i]});
-			if (highHand.getGameValue() <= lowHand.getGameValue()){
-				System.out.println("####### Boundary error: " + highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
+
+			if (!testHandGreaterThan(highHand, lowHand, testType)){
 				boundaryTestSuccess = false;
-			}
-			else {
-				System.out.println("Boundary test success: "+ highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
 			}
 		}
 		
@@ -767,14 +745,9 @@ public class HandOfCards {
 		System.out.println("\n\n~~~~~~~~~----------Straight vs. Three of a Kind Boundary Test----------~~~~~~~~~");
 		highHand.setHand(new PlayingCard[] {aces[3], fives[1], fours[0], threes[1], twos[2]});
 		lowHand.setHand(new PlayingCard[] {aces[0], aces[1], aces[2], kings[0], queens[0]});
-		if (highHand.getGameValue() <= lowHand.getGameValue()){
-			System.out.println("####### Boundary error: " + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+
+		if (!testHandGreaterThan(highHand, lowHand, testType)){
 			boundaryTestSuccess = false;
-		}
-		else {
-			System.out.println("Boundary test success: "+ highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
 		}
 		
 		/*
@@ -783,14 +756,9 @@ public class HandOfCards {
 		System.out.println("\n\n~~~~~~~~~----------Three of a Kind vs. Two Pair Boundary Test----------~~~~~~~~~");
 		highHand.setHand(new PlayingCard[] { fours[0], threes[0], twos[2], twos[1], twos[0]});
 		lowHand.setHand(new PlayingCard[] {aces[0], aces[1], kings[0], kings[1], queens[0]});
-		if (highHand.getGameValue() <= lowHand.getGameValue()){
-			System.out.println("####### Boundary error: " + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+
+		if (!testHandGreaterThan(highHand, lowHand, testType)){
 			boundaryTestSuccess = false;
-		}
-		else {
-			System.out.println("Boundary test success: "+ highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
 		}
 		
 		/*
@@ -799,14 +767,9 @@ public class HandOfCards {
 		System.out.println("\n\n~~~~~~~~~----------Two Pair vs. One Pair Boundary Test----------~~~~~~~~~");
 		highHand.setHand(new PlayingCard[] {fours[0], threes[0], threes[1], twos[0], twos[1]});
 		lowHand.setHand(new PlayingCard[] {aces[0], aces[1], kings[0], queens[0], jacks[0]});
-		if (highHand.getGameValue() <= lowHand.getGameValue()){
-			System.out.println("####### Boundary error: " + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+
+		if (!testHandGreaterThan(highHand, lowHand, testType)){
 			boundaryTestSuccess = false;
-		}
-		else {
-			System.out.println("Boundary test success: "+ highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
 		}
 		
 		/*
@@ -815,14 +778,9 @@ public class HandOfCards {
 		System.out.println("\n\n~~~~~~~~~----------One Pair vs. High Card Boundary Test----------~~~~~~~~~");
 		highHand.setHand(new PlayingCard[] {fives[0], fours[0], threes[0], twos[0], twos[0]});
 		lowHand.setHand(new PlayingCard[] {aces[0], kings[0], queens[0], jacks[0], nines[1]});
-		if (highHand.getGameValue() <= lowHand.getGameValue()){
-			System.out.println("####### Boundary error: " + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+
+		if (!testHandGreaterThan(highHand, lowHand, testType)){
 			boundaryTestSuccess = false;
-		}
-		else {
-			System.out.println("Boundary test success: "+ highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
 		}
 		
 		return boundaryTestSuccess;
@@ -854,6 +812,9 @@ public class HandOfCards {
 		threes = allCards[1];
 		twos = allCards[0];
 		
+		// String for print statements
+		String testType = "Inner Test";
+		
 		/*
 		 * Royal flush inner tests. Check all royal flushes are equal
 		 */
@@ -861,14 +822,9 @@ public class HandOfCards {
 		for (int i=0; i<4; i++){
 			highHand.setHand(new PlayingCard[] {aces[i], kings[i], queens[i], jacks[i], tens[i]});
 			lowHand.setHand(new PlayingCard[] {aces[(i+1)%4], kings[(i+1)%4], queens[(i+1)%4], jacks[(i+1)%4], tens[(i+1)%4]});
-			if (highHand.getGameValue() != lowHand.getGameValue()){
-				System.out.println("####### Inner Test Error (Not Equal):" + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+
+			if (!testHandsEqual(highHand, lowHand, testType)){
 				innerTestsSuccess = false;
-			}
-			else {
-				System.out.println("Inner test success (equal) :"+ highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
 			}
 		}
 		
@@ -884,29 +840,20 @@ public class HandOfCards {
 					allCards[i+3][j], allCards[i+4][j]});
 				lowHand.setHand(new PlayingCard[] {allCards[i][(j+1)%4], allCards[i+1][(j+1)%4], allCards[i+2][(j+1)%4], 
 					allCards[i+3][(j+1)%4], allCards[i+4][(j+1)%4]});
-				if (highHand.getGameValue() != lowHand.getGameValue()){
-					System.out.println("####### Inner Test Error (Not Equal):" + highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
+
+				if (!testHandsEqual(highHand, lowHand, testType)){
 					innerTestsSuccess = false;
-				}
-				else {
-					System.out.println("Inner test success (equal) :"+ highHand.toString() + highHand.handType() 
-							+ " vs. " + lowHand.toString() + lowHand.handType());
 				}
 			}
 			// Test ace low straight flush game value versus twos low straight flush
 			System.out.println("Low Ace test:");
 			highHand.setHand(new PlayingCard[] {sixes[0], fives[0], fours[0], threes[0], twos[0]});
 			lowHand.setHand(new PlayingCard[] {aces[1], fives[1], fours[1], threes[1], twos[1]});
-			if (highHand.getGameValue() <= lowHand.getGameValue()){
-				System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+
+			if (!testHandGreaterThan(highHand, lowHand, testType)){
 				innerTestsSuccess = false;
 			}
-			else {
-				System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
-			}
+			
 			System.out.println("");
 		}
 		
@@ -916,14 +863,9 @@ public class HandOfCards {
 				allCards[i+3][0], allCards[i+4][0]});
 			lowHand.setHand(new PlayingCard[] {allCards[i-1][0], allCards[i][0], allCards[i+1][0], 
 				allCards[i+2][0], allCards[i+3][0]});
-			if (highHand.getGameValue() <= lowHand.getGameValue()){
-				System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+
+			if (!testHandGreaterThan(highHand, lowHand, testType)){
 				innerTestsSuccess = false;
-			}
-			else {
-				System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
 			}
 		}
 		
@@ -934,14 +876,9 @@ public class HandOfCards {
 		for (int i=1; i<allCards.length; i++){
 			highHand.setHand(new PlayingCard[] {allCards[i][0], allCards[i][1], allCards[i][2], allCards[i][3], allCards[(i+1)%13][0]});
 			lowHand.setHand(new PlayingCard[] {allCards[i-1][0], allCards[i-1][1], allCards[i-1][2], allCards[i-1][3], allCards[(i+1)%13][0]});
-			if (highHand.getGameValue() <= lowHand.getGameValue()){
-				System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+
+			if (!testHandGreaterThan(highHand, lowHand, testType)){
 				innerTestsSuccess = false;
-			}
-			else {
-				System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
 			}
 		}
 		
@@ -953,14 +890,9 @@ public class HandOfCards {
 		for (int i=1; i<allCards.length; i++){
 			highHand.setHand(new PlayingCard[] {allCards[i][0], allCards[i][1], allCards[i][2], allCards[(i+1)%13][0], allCards[(i+1)%13][1]});
 			lowHand.setHand(new PlayingCard[] {allCards[i-1][0], allCards[i-1][1], allCards[i-1][2], allCards[(i+1)%13][2], allCards[(i+1)%13][3]});
-			if (highHand.getGameValue() <= lowHand.getGameValue()){
-				System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+			
+			if (!testHandGreaterThan(highHand, lowHand, testType)){
 				innerTestsSuccess = false;
-			}
-			else {
-				System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
 			}
 		}
 
@@ -1001,14 +933,8 @@ public class HandOfCards {
 			highHand.setHand(highCards);
 			lowHand.setHand(lowCards);
 			
-			if (highHand.getGameValue() <= lowHand.getGameValue()){
-				System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
+			if (!testHandGreaterThan(highHand, lowHand, testType)){
 				innerTestsSuccess = false;
-			}
-			else {
-				System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
 			}
 		}
 		
@@ -1024,14 +950,9 @@ public class HandOfCards {
 					allCards[i+3][j], allCards[i+4][(j+3)%4]});
 				lowHand.setHand(new PlayingCard[] {allCards[i][(j+1)%4], allCards[i+1][(j+1)%4], allCards[i+2][(j+1)%4], 
 					allCards[i+3][(j+1)%4], allCards[i+4][(j+2)%4]});
-				if (highHand.getGameValue() != lowHand.getGameValue()){
-					System.out.println("####### Inner Test Error (Not Equal):" + highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
+
+				if (!testHandsEqual(highHand, lowHand, testType)){
 					innerTestsSuccess = false;
-				}
-				else {
-					System.out.println("Inner test success (equal) :"+ highHand.toString() + highHand.handType() 
-							+ " vs. " + lowHand.toString() + lowHand.handType());
 				}
 			}
 			System.out.println("");
@@ -1043,14 +964,8 @@ public class HandOfCards {
 				allCards[i+3][0], allCards[i+4][1]});
 			lowHand.setHand(new PlayingCard[] {allCards[i-1][0], allCards[i][0], allCards[i+1][0], 
 				allCards[i+2][0], allCards[i+3][1]});
-			if (highHand.getGameValue() <= lowHand.getGameValue()){
-				System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+			if (!testHandGreaterThan(highHand, lowHand, testType)){
 				innerTestsSuccess = false;
-			}
-			else {
-				System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
 			}
 		}
 		
@@ -1063,14 +978,8 @@ public class HandOfCards {
 		for (int i=1; i<allCards.length; i++){
 			highHand.setHand(new PlayingCard[] {allCards[i][0], allCards[i][1], allCards[i][2], allCards[(i+1)%13][0], allCards[(i+2)%13][1]});
 			lowHand.setHand(new PlayingCard[] {allCards[i-1][0], allCards[i-1][1], allCards[i-1][2], allCards[(i+1)%13][2], allCards[(i+2)%13][3]});
-			if (highHand.getGameValue() <= lowHand.getGameValue()){
-				System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
+			if (!testHandGreaterThan(highHand, lowHand, testType)){
 				innerTestsSuccess = false;
-			}
-			else {
-				System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
 			}
 		}
 		
@@ -1082,54 +991,33 @@ public class HandOfCards {
 		// Check pairs of different suits with equal ranking unmatched cards produce equal score 
 		highHand.setHand(new PlayingCard[] {fours[0], fours[1], threes[0], threes[1], twos[0]});
 		lowHand.setHand(new PlayingCard[] {fours[2], fours[3], threes[2], threes[3], twos[1]});
-		if (highHand.getGameValue() != lowHand.getGameValue()){
-			System.out.println("####### Inner Test Error (Not Equal):" + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+		
+		if (!testHandsEqual(highHand, lowHand, testType)){
 			innerTestsSuccess = false;
-		}
-		else {
-			System.out.println("Inner test success (equal) :"+ highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
 		}
 		
 		// Check that the upper pair increases score more than the rest of the cards
 		highHand.setHand(new PlayingCard[] {fours[0], fours[1], threes[2], threes[3], fives[1]});
 		lowHand.setHand(new PlayingCard[] {threes[0], threes[1], twos[2], twos[3], aces[0]});
-		if (highHand.getGameValue() <= lowHand.getGameValue()){
-			System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+		
+		if (!testHandGreaterThan(highHand, lowHand, testType)){
 			innerTestsSuccess = false;
-		}
-		else {
-			System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
 		}
 		
 		//Check that if the upper pair are the same, the middle increases score more than unmatched card
 		highHand.setHand(new PlayingCard[] {fours[0], fours[1], threes[2], threes[3], twos[1]});
 		lowHand.setHand(new PlayingCard[] {fours[2], fours[3], twos[2], twos[3], aces[0]});
-		if (highHand.getGameValue() <= lowHand.getGameValue()){
-			System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+		
+		if (!testHandGreaterThan(highHand, lowHand, testType)){
 			innerTestsSuccess = false;
-		}
-		else {
-			System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
 		}
 		
 		//Check that the last unmatched card increases score when incremented
 		for (int i=3; i < allCards.length-1; i++){
 			highHand.setHand(new PlayingCard[] {fours[0], fours[1], threes[2], threes[3], allCards[(i+1)%13][1]});
 			lowHand.setHand(new PlayingCard[] {fours[2], fours[3], threes[0], threes[1], allCards[i][1]});
-			if (highHand.getGameValue() <= lowHand.getGameValue()){
-				System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
+			if (!testHandGreaterThan(highHand, lowHand, testType)){
 				innerTestsSuccess = false;
-			}
-			else {
-				System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
 			}
 		}
 		
@@ -1142,66 +1030,36 @@ public class HandOfCards {
 		// Check pairs of different suits with equal ranking unmatched cards produce equal score 
 		highHand.setHand(new PlayingCard[] {fives[0], fours[0], threes[0], threes[1], twos[0]});
 		lowHand.setHand(new PlayingCard[] {fives[1], fours[1], threes[2], threes[3], twos[1]});
-		if (highHand.getGameValue() != lowHand.getGameValue()){
-			System.out.println("####### Inner Test Error (Not Equal):" + highHand.toString() + highHand.handType() 
-				+ " vs. " + lowHand.toString() + lowHand.handType());
+		if (!testHandsEqual(highHand, lowHand, testType)){
 			innerTestsSuccess = false;
-		}
-		else {
-			System.out.println("Inner test success (equal) :"+ highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
 		}
 		
 		// Check weighted difference between matched pairs of cards
 		highHand.setHand(new PlayingCard[] {fives[0], fours[0], threes[0], threes[1], twos[0]});
 		lowHand.setHand(new PlayingCard[]  {aces[0], kings[0], queens[0], twos[0], twos[0]});
-		if (highHand.getGameValue() <= lowHand.getGameValue()){
-			System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+		if (!testHandGreaterThan(highHand, lowHand, testType)){
 			innerTestsSuccess = false;
-		}
-		else {
-			System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
 		}
 		
 		// Check weighted difference of highest ranking unmatched card
 		highHand.setHand(new PlayingCard[] {sixes[0], fours[0], threes[0], twos[0], twos[1]});
 		lowHand.setHand(new PlayingCard[] {fives[0], fours[1], threes[1], twos[2], twos[3]});
-		if (highHand.getGameValue() <= lowHand.getGameValue()){
-			System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+		if (!testHandGreaterThan(highHand, lowHand, testType)){
 			innerTestsSuccess = false;
-		}
-		else {
-			System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
 		}
 		
 		// Check weighted difference of second highest ranking unmatched card
 		highHand.setHand(new PlayingCard[] {sixes[0], fives[0], threes[0], twos[0], twos[1]});
 		lowHand.setHand(new PlayingCard[] {sixes[1], fours[0], threes[1], twos[2], twos[3]});
-		if (highHand.getGameValue() <= lowHand.getGameValue()){
-			System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+		if (!testHandGreaterThan(highHand, lowHand, testType)){
 			innerTestsSuccess = false;
-		}
-		else {
-			System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
 		}
 		
 		// Check weighted difference of lowest ranking unmatched card
 		highHand.setHand(new PlayingCard[] {sixes[0], fives[0], fours[0], twos[0], twos[1]});
 		lowHand.setHand(new PlayingCard[] {sixes[1], fives[1], threes[0], twos[2], twos[3]});
-		if (highHand.getGameValue() <= lowHand.getGameValue()){
-			System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+		if (!testHandGreaterThan(highHand, lowHand, testType)){
 			innerTestsSuccess = false;
-		}
-		else {
-			System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
 		}
 		
 		/*
@@ -1241,19 +1099,56 @@ public class HandOfCards {
 			highHand.setHand(highCards);
 			lowHand.setHand(lowCards);
 			
-			if (highHand.getGameValue() <= lowHand.getGameValue()){
-				System.out.println("####### Inner Test Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
+			if (!testHandGreaterThan(highHand, lowHand, testType)){
 				innerTestsSuccess = false;
-			}
-			else {
-				System.out.println("Inner test success (Greater Than) :"+ highHand.toString() + highHand.handType() 
-						+ " vs. " + lowHand.toString() + lowHand.handType());
 			}
 		}
 
 		
 		return innerTestsSuccess;
+	}
+	
+	/**
+	 * Tests whether the game value of the hands are equal.
+	 * Prints success message if test is successful and error message if test fails
+	 * 
+	 * @return true if test passes, false if test fails
+	 */
+	private static boolean testHandsEqual(HandOfCards hand1, HandOfCards hand2, String testType){
+		boolean testSuccess = true;
+		
+		if (hand1.getGameValue() != hand2.getGameValue()){
+			System.out.println("####### " + testType + " Error (Not Equal):" + hand1.toString() + hand1.handType() 
+				+ " vs. " + hand2.toString() + hand2.handType());
+			testSuccess = false;
+		}
+		else {
+			System.out.println(testType + " success (equal) :"+ hand1.toString() + hand1.handType() 
+					+ " vs. " + hand2.toString() + hand2.handType());
+		}
+		return testSuccess;
+	}
+	
+	/**
+	 * Tests whether the game value of the first hand is greater than the second hand
+	 * Prints success message if test is successful and error message if test fails
+	 * 
+	 * @return true if test passes, false if test fails
+	 */
+	private static boolean testHandGreaterThan(HandOfCards highHand, HandOfCards lowHand, String testType){
+		boolean testSuccess = true;
+		
+		if (highHand.getGameValue() <= lowHand.getGameValue()){
+			System.out.println("####### " + testType + " Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+			testSuccess = false;
+		}
+		else {
+			System.out.println(testType + " success (Greater Than) :"+ highHand.toString() + highHand.handType() 
+					+ " vs. " + lowHand.toString() + lowHand.handType());
+		}
+		
+		return testSuccess;
 	}
 	
 	/**
@@ -1309,16 +1204,16 @@ public class HandOfCards {
 	public static void main(String[] args) throws InterruptedException {
 		
 		//First make an array containing all cards to use in our tests
-		PlayingCard[][] allCards = new PlayingCard[13][4];
+		PlayingCard[][] allCardsArray = new PlayingCard[13][4];
 		for (int i=0; i<13; i++){
 			for (int j=0; j<4; j++){
-				allCards[i][j] = new PlayingCard(PlayingCard.CARD_TYPES[(i+1)%13], PlayingCard.SUITS[j], 
+				allCardsArray[i][j] = new PlayingCard(PlayingCard.CARD_TYPES[(i+1)%13], PlayingCard.SUITS[j], 
 						PlayingCard.FACE_VALUES[(i+1)%13], PlayingCard.GAME_VALUES[(i+1)%13]);
 			}
 		}
 		
-		boolean boundaryTestSuccess = executeBoundaryTests(allCards);
-		boolean innerTestsSuccess = executeInnerTests(allCards);
+		boolean boundaryTestSuccess = executeBoundaryTests(allCardsArray);
+		boolean innerTestsSuccess = executeInnerTests(allCardsArray);
 		
 		
 		if (boundaryTestSuccess){
@@ -1334,7 +1229,7 @@ public class HandOfCards {
 			System.out.println("XXX Inner test(s) failed, please check terminal above for failures");
 		}
 		
-		testHasAceLowSequence(allCards);
+		testHasAceLowSequence(allCardsArray);
 		
 	}
 
