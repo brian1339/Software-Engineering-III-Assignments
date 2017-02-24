@@ -553,7 +553,39 @@ public class HandOfCards {
 		return gameValue;
 	}
 	
-	/*
+	/**
+	 * Returns a boolean of whether the hand is considered a busted flush
+	 * ie. all cards are of the same suit but one
+	 */
+	public boolean isBustedFlush(){
+		boolean bustedFlush = false;
+		
+		//We check each card in the array and compare its suit to the next
+		for (int i=0; i<cardArray.length-1; i++){
+			
+
+			//If there is a single card that does not match the previous set true
+			if (cardArray[i+1].getSuit() != cardArray[i].getSuit()){
+				bustedFlush = true;
+				
+				//Then check the rest of the array matches card [i]
+				for (int j=i+2; j<cardArray.length; j++){
+					
+					//If another card doesn't match i, we don't have a busted flush
+					if (cardArray[i].getSuit() != cardArray[j].getSuit()){
+						bustedFlush = false;
+					}
+					
+				}
+				//We only want to check for a single card difference so break after one check
+				break;
+			}
+		}
+		
+		return bustedFlush;
+	}
+	
+	/**
 	 * Tests all boundary cases between game values hands and all 
 	 * other workings of the class work correctly
 	 */
@@ -804,7 +836,7 @@ public class HandOfCards {
 		return boundaryTestSuccess;
 	}
 	
-	/*
+	/**
 	 * Tests within hand types whether HandOfCards.getGameValue is reflecting the value
 	 * of the hands correctly and whether all other workings of the class work correctly
 	 */
