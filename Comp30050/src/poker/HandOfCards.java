@@ -835,7 +835,7 @@ public class HandOfCards {
 		 *  increments the straight sequence
 		 */
 		if (cardPosition == cardArray.length-1){
-			discardProbability += 100*4/(52-cardArray.length);
+			discardProbability += 100*1/(52-cardArray.length);
 		}
 		
 		return discardProbability;
@@ -843,7 +843,7 @@ public class HandOfCards {
 	
 	/**
 	 * Returns a integer probability from 0-100 of improving the hand from a 
-	 * straight by discarding the card at the position input
+	 * full house by discarding the card at the position input
 	 */
 	private int discardProbabilityFullHouse(int cardPosition){
 		
@@ -853,12 +853,16 @@ public class HandOfCards {
 		// Throwing away the pair has a small chance of getting the card to increase the hand to a 4 of a kind
 		PlayingCard[] segmentSorted = segmentSort(2);
 		if (cardArray[cardPosition].getGameValue() == segmentSorted[0].getGameValue()){
-			discardProbability += 1/(52 - cardArray.length);
+			discardProbability += 100*1/(52 - cardArray.length);
 		}
 		
 		return discardProbability;
 	}
-	/* TODO
+	
+	/**
+	 * Returns a integer probability from 0-100 of improving the hand from a 
+	 * flush by discarding the card at the position input
+	 */
 	private int discardProbabilityFlush (int cardPosition){
 
 		int discardProbability = 0;
@@ -866,17 +870,111 @@ public class HandOfCards {
 		/*
 		 *  If a broken straight is in the flush, getting a card to complete the flush 
 		 *  has the possibility of making a straight flush
-		 *//*
+		 */
 		if (isBrokenStraight()){
 			
+			// Check our missing card is from either the front or back of sequence 
+			if (isBrokenStraightSolidFour()){
+				
+				// Check if the first card is the odd card and not ace low
+				if (cardArray[0].getGameValue() != cardArray[1].getGameValue()+1 
+						&& cardArray[1].getGameValue() == cardArray[2].getGameValue()+1) {
+					
+					/*
+					 * If the position is the odd card we have the probability of getting a front
+					 * or end to the sequence in the suit of our flush to improve 
+					 */
+					if (cardPosition == 0){
+						discardProbability += 100*2/(52-cardArray.length);
+					}
+				}
+				
+				// Check if the last card is the odd card
+				else if (cardArray[3].getGameValue() != cardArray[4].getGameValue()+1){
+					
+					/*
+					 * If the position is the odd card we have the probability of getting a front
+					 * or end to the sequence in the suit of our flush to improve 
+					 */
+					if (cardPosition == 4){
+						if (cardArray[0].getGameValue() ==14){
+							/*
+							 * If the broken straight is ace high, only one card 
+							 * can upgrade it to straight flush
+							 */
+							discardProbability += 100*1/(52-cardArray.length);
+						}
+						else {
+							/*
+							 * Else there are two cards that could front or end our
+							 * broken flush to upgrade
+							 */
+							discardProbability += 100*2/(52-cardArray.length);
+						}
+						discardProbability += 100*2/(52-cardArray.length);
+					}
+				}
+				
+				//Ace must be low and the odd card is position 1
+				else {
+					if (cardPosition == 2) {
+						
+						/*
+						 * There is only one card in the deck that can improve the hand
+						 * as ace is low
+						 */
+						discardProbability += 100*1/(52-cardArray.length);
+					}
+				}
+				
+			}
+			else if (isBrokenStraightMissingLink()){
+				
+				// If the odd card is the top and not a broken ace low straight
+				if (cardArray[0].getGameValue() != cardArray[1].getGameValue()+1 
+						&& cardArray[0].getFaceValue() != cardArray[4].getFaceValue()-1){
+					if (cardPosition ==0){
+						/*
+						 * Only one card in the remaining deck can make it a higher hand of a
+						 * straight flush
+						 */
+						discardProbability += 100*1/(52-cardArray.length);
+					}
+				}
+				
+				// If the hand is an ace low broken straight, the odd card is in position 1
+				else if (cardArray[3].getGameValue() == cardArray[4].getGameValue() 
+						&& cardArray[0].getFaceValue() == cardArray[4].getFaceValue()-1){
+					if (cardPosition == 1){
+						/*
+						 * Only one card in the remaining deck can make it a higher hand of a
+						 * straight flush
+						 */
+						discardProbability += 100*1/(52-cardArray.length);
+					}
+				}
+				
+				// Else the odd card is at the end of the array
+				else {
+					if (cardPosition == 4){
+						/*
+						 * Only one card in the remaining deck can make it a higher hand of a
+						 * straight flush
+						 */
+						discardProbability += 100*1/(52-cardArray.length);
+					}
+				}
+			}
 		}
-	}*/
+		
+		return discardProbability;
+	}
 	
 	/**
 	 * Returns a integer probability from 0-100 of improving the hand from a 
 	 * straight by discarding the card at the position input
 	 */
-	private int discardProbalityStraight(int cardPosition) {
+	private int discardProbabilityStraight(int cardPosition) {
 		
 		// Start with probability 0 
 		int discardProbability = 0;
@@ -904,10 +1002,19 @@ public class HandOfCards {
 	}
 	
 	/**
+	 * Returns a integer probability from 0-100 of improving the hand from a 
+	 * Three of A Kind by discarding the card at the position input
+	 */
+	private int discardProbabilityThreeOfAKind(int cardPosition) {
+		
+	}
+	
+	
+	/**
 	 * Take the position of a card in the array and returns an int in the range
 	 * 0-100 to represent the possibility of the hand being discarded to improve
 	 * the poker hand. Returns -1 for invalid input.
-	 *//*
+	 */
 	public int getDiscardProbability(int cardPosition){
 		
 		// Return -1 if an invalid input is received
@@ -934,11 +1041,12 @@ public class HandOfCards {
 		if (isFlush()){
 			discardProbability = discardProbabilityFlush(cardPosition);
 		}
-		if (){
+		if (isStraight()){
+			discardProbability = discardProbabilityStraight(cardPosition);
 			
 		}
-		if (){
-			
+		if (isThreeOfAKind()){
+			discardProbability = discardProbabilityThreeOfAKind(cardPosition);
 		}
 		if (){
 			
@@ -953,7 +1061,7 @@ public class HandOfCards {
 			
 		}
 	}
-	*/
+	
 
 	/**
 	 * Tests all boundary cases between game values hands and all 
