@@ -744,13 +744,15 @@ public class HandOfCards {
 			brokenStraight = true;
 			for (int i=0; i<cardArray.length-2; i++){
 				if (cardArray[i].getGameValue() != cardArray[i+1].getGameValue()+1){
-					brokenStraight = false;
+					brokenStraight = false;;
 				}
 			}
+			
 		}
 		
 		// Check for broken straight solid 4 with ace low
-		if (!brokenStraight && cardArray[1].getGameValue() != cardArray[2].getGameValue()+1){
+		if (!brokenStraight && cardArray[1].getGameValue() != cardArray[2].getGameValue()+1 &&
+				cardArray[4].getFaceValue() == cardArray[0].getFaceValue()+1){
 			brokenStraight = true;
 			for (int i=2; i<cardArray.length-2; i++){
 				if (cardArray[i].getFaceValue() != cardArray[(i+1)%cardArray.length].getFaceValue()+1){
@@ -878,7 +880,7 @@ public class HandOfCards {
 				
 				// Check if the first card is the odd card and not ace low
 				if (cardArray[0].getGameValue() != cardArray[1].getGameValue()+1 
-						&& cardArray[1].getGameValue() == cardArray[2].getGameValue()+1) {
+						&& cardArray[4].getFaceValue() != cardArray[0].getFaceValue()+1) {
 					
 					/*
 					 * If the position is the odd card we have the probability of getting a front
@@ -889,8 +891,9 @@ public class HandOfCards {
 					}
 				}
 				
-				// Check if the last card is the odd card
-				else if (cardArray[3].getGameValue() != cardArray[4].getGameValue()+1){
+				// Check if the last card is the odd card and aces not low
+				else if (cardArray[3].getGameValue() != cardArray[4].getGameValue()+1
+							&& cardArray[4].getFaceValue() != cardArray[0].getFaceValue()+1){
 					
 					/*
 					 * If the position is the odd card we have the probability of getting a front
@@ -911,14 +914,13 @@ public class HandOfCards {
 							 */
 							discardProbability += 100*2/(52-cardArray.length);
 						}
-						discardProbability += 100*2/(52-cardArray.length);
 					}
 				}
 				
 				//Ace must be low and the odd card is position 1
 				else {
-					if (cardPosition == 2) {
-						
+					if (cardPosition == 1) {
+
 						/*
 						 * There is only one card in the deck that can improve the hand
 						 * as ace is low
@@ -929,7 +931,7 @@ public class HandOfCards {
 				
 			}
 			else if (isBrokenStraightMissingLink()){
-				
+
 				// If the odd card is the top and not a broken ace low straight
 				if (cardArray[0].getGameValue() != cardArray[1].getGameValue()+1 
 						&& cardArray[0].getFaceValue() != cardArray[4].getFaceValue()-1){
@@ -943,7 +945,7 @@ public class HandOfCards {
 				}
 				
 				// If the hand is an ace low broken straight, the odd card is in position 1
-				else if (cardArray[3].getGameValue() == cardArray[4].getGameValue() 
+				else if (cardArray[3].getGameValue() == cardArray[4].getGameValue() +1
 						&& cardArray[0].getFaceValue() == cardArray[4].getFaceValue()-1){
 					if (cardPosition == 1){
 						/*
@@ -1885,29 +1887,109 @@ public class HandOfCards {
 		return testSuccess;
 	}
 	
-	private static boolean testDiscardProbabilities(PlayingCard[][] allCards){
+	/**
+	 * Tests the discard Probabilities against hand calculated answers
+	 * @throws InterruptedException 
+	 */
+	private static boolean testDiscardProbabilities(PlayingCard[][] allCards) throws InterruptedException{
 		
 		boolean testSuccess = true;
-		int[] answers = new int[5];
 		DeckOfCards testDeck = new DeckOfCards();
 		HandOfCards testHand = new HandOfCards(testDeck);
 		
 		// Break some of allCards into different card categories for ease of access to different ranks
-		PlayingCard[] aces, kings, queens, jacks, tens, sixes, fives, fours,
+		PlayingCard[] aces, kings, queens, jacks, tens, nines, eights, sevens, sixes, fives, fours,
 		threes, twos;
 		aces = allCards[12];
 		kings = allCards[11];
 		queens = allCards[10];
 		jacks = allCards[9];
 		tens = allCards[8];
+		nines = allCards[7];
+		eights = allCards[6];
+		sevens = allCards[5];
 		sixes = allCards[4];
 		fives = allCards[3];
 		fours = allCards[2];
 		threes = allCards[1];
 		twos = allCards[0];
 		
-		answers = {0,0,0,0,0};
+		System.out.println("\n\n\n|||||||||||||||||||||Royal Flush Probability Tests||||||||||||||||||||");
+		testHand.setHand(new PlayingCard[] {aces[0], kings[0], queens[0], jacks[0], tens[0]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,0,0,0}, testSuccess);
 		
+		System.out.println("\n\n\n|||||||||||||||||||||Straight Flush Probability Tests||||||||||||||||||||");
+		testHand.setHand(new PlayingCard[] {kings[0], queens[0], jacks[0], tens[0], nines[0]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,0,0,2}, testSuccess);
+		
+		System.out.println("\n\n\n|||||||||||||||||||||Four Of A Kind Probability Tests||||||||||||||||||||");
+		testHand.setHand(new PlayingCard[] {aces[0], nines[0], nines[1], nines[2], nines[3]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,0,0,0}, testSuccess);
+		
+		System.out.println("\n\n\n|||||||||||||||||||||Full House Probability Tests||||||||||||||||||||");
+		testHand.setHand(new PlayingCard[] {nines[1], nines[2], nines[3], fives[0], fives[1]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,0,2,2}, testSuccess);
+		
+		System.out.println("\n\n\n|||||||||||||||||||||Flush Probability Tests||||||||||||||||||||");
+		testHand.setHand(new PlayingCard[] {sevens[0], fives[0], fours[0], threes[0], twos[0]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {4,0,0,0,0}, testSuccess);
+		
+		testHand.setHand(new PlayingCard[] {sevens[0], sixes[0], fives[0], fours[0], twos[0]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,0,0,4}, testSuccess);
+		
+		testHand.setHand(new PlayingCard[] {aces[0], kings[0], queens[0], jacks[0], nines[0]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,0,0,2}, testSuccess);
+		
+		testHand.setHand(new PlayingCard[] {kings[0], queens[0], jacks[0], tens[0], eights[0]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,0,0,4}, testSuccess);
+		
+		testHand.setHand(new PlayingCard[] {aces[0], sixes[0], fours[0], threes[0], twos[0]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,2,0,0,0}, testSuccess);
+		
+		testHand.setHand(new PlayingCard[] {eights[0], sixes[0], fives[0], threes[0], twos[0]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {2,0,0,0,0}, testSuccess);
+		
+		testHand.setHand(new PlayingCard[] {aces[0], sevens[0], fives[0], fours[0], twos[0]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,2,0,0,0}, testSuccess);
+		
+		testHand.setHand(new PlayingCard[] {eights[0], sevens[0], fives[0], fours[0], twos[0]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,0,0,2}, testSuccess);
+		
+		return testSuccess;
+	}
+	
+	/**
+	 * Takes a hand of cards and a set of probability answers and tests the discard probabilities
+	 * against those given in the array.
+	 * Prints test statements for info on the console
+	 */
+	private static boolean testProbabilityEquality(HandOfCards testHand, int[] answers, boolean currentStatus){
+		
+		boolean testSuccess = true;
+		String consoleOutput = testHand.toString() + "\tProbabilities:\t";
+		String consoleOutputLine2 = "";
+		
+		for (int i=0; i<CARDS_HELD; i++){
+			
+			consoleOutput += testHand.getDiscardProbability(i);
+			
+			if (testHand.getDiscardProbability(i) != answers[i]){
+				
+				testSuccess = false;
+				
+				consoleOutputLine2 += "####### Error above: [" + i + "] "+ " Got " 
+						+ testHand.getDiscardProbability(i) + " || Expected: " + answers[i] + "\n";
+			}
+		}
+		
+		System.out.println(consoleOutput + "\n" + consoleOutputLine2);
+		
+		
+		if (currentStatus == false){
+			testSuccess = false;
+		}
+		
+		return testSuccess;
 	}
 	
 	/*
@@ -1944,6 +2026,8 @@ public class HandOfCards {
 		
 		testHasAceLowSequence(allCardsArray);
 		testIsBrokenStraight(allCardsArray);
+		
+		testDiscardProbabilities(allCardsArray);
 		
 	}
 
