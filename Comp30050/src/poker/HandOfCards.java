@@ -995,7 +995,9 @@ public class HandOfCards {
 		 */
 		if (isBustedFlush()){
 			if (cardArray[cardPosition].getSuit() != 
-					cardArray[(cardPosition+1)%cardArray.length].getSuit()){
+					cardArray[(cardPosition+1)%cardArray.length].getSuit()
+					&& cardArray[cardPosition].getSuit() != 
+							cardArray[(cardPosition+2)%cardArray.length].getSuit()){
 				discardProbability += 100*(13-4)/(52-cardArray.length);
 			}
 		}
@@ -1731,55 +1733,6 @@ public class HandOfCards {
 		return testSuccess;
 	}
 	
-	/**
-	 * Tests the isBrokenStraightSolidFour
-	 * @return true if tests all pass and method functions correctly 
-	 * @throws InterruptedException 
-	 */
-	private static boolean testIsBrokenStraightSolidFour(PlayingCard[][] allCards) throws InterruptedException {
-		boolean testSuccess = true;
-		
-		PlayingCard ace, seven, six, five, four, three, two;
-		DeckOfCards testDeck = new DeckOfCards();
-		HandOfCards testHand = new HandOfCards(testDeck);
-		
-		ace = allCards[12][0];
-		two = allCards[0][0];
-		three = allCards[1][0];
-		four = allCards[2][0];
-		five = allCards[3][0];
-		six = allCards[4][0];
-		seven = allCards[5][0];
-
-		return testSuccess;
-	}
-	
-	/**
-	 * Tests the isBrokenStraightSolidFour
-	 * @return true if tests all pass and method functions correctly 
-	 * @throws InterruptedException 
-	 */
-	private static boolean testIsBrokenStraightMissingLink(PlayingCard[][] allCards) throws InterruptedException {
-		boolean testSuccess = true;
-		
-		PlayingCard ace, eight, seven, six, five, four, three, two;
-		DeckOfCards testDeck = new DeckOfCards();
-		HandOfCards testHand = new HandOfCards(testDeck);
-		
-		ace = allCards[12][0];
-		two = allCards[0][0];
-		three = allCards[1][0];
-		four = allCards[2][0];
-		five = allCards[3][0];
-		six = allCards[4][0];
-		seven = allCards[5][0];
-		eight = allCards[6][0];
-		
-		
-		
-		return testSuccess;
-	}
-	
 	private static boolean testIsBrokenStraight(PlayingCard[][] allCards) throws InterruptedException {
 		boolean testSuccess = true;
 		
@@ -1955,6 +1908,42 @@ public class HandOfCards {
 		testHand.setHand(new PlayingCard[] {eights[0], sevens[0], fives[0], fours[0], twos[0]});
 		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,0,0,2}, testSuccess);
 		
+		System.out.println("\n\n\n|||||||||||||||||||||Straight Probability Tests||||||||||||||||||||");
+		testHand.setHand(new PlayingCard[] {sevens[1], sixes[2], fives[0], fours[0], threes[0]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,0,0,8}, testSuccess);
+		
+		testHand.setHand(new PlayingCard[] {sevens[0], sixes[0], fives[0], fours[0], threes[1]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,0,0,27}, testSuccess);
+		
+		testHand.setHand(new PlayingCard[] {sevens[0], sixes[0], fives[0], fours[1], threes[0]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,0,19,8}, testSuccess);
+		
+		System.out.println("\n\n\n|||||||||||||||||||||Three of a Kind Probability Tests||||||||||||||||||||");
+		testHand.setHand(new PlayingCard[] {nines[1], nines[2], nines[3], fives[0], fours[1]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,0,8,8}, testSuccess);
+		
+		System.out.println("\n\n\n|||||||||||||||||||||Two Pair Probability Tests||||||||||||||||||||");
+		testHand.setHand(new PlayingCard[] {aces[1], jacks[0], jacks[1], nines[2], nines[3]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {8,0,0,0,0}, testSuccess);
+
+		testHand.setHand(new PlayingCard[] {jacks[0], jacks[1], tens[0], nines[2], nines[3]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,8,0,0}, testSuccess);
+		
+		testHand.setHand(new PlayingCard[] {jacks[0], jacks[1], nines[2], nines[3], eights[0]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,0,0,8}, testSuccess);
+		
+		System.out.println("\n\n\n|||||||||||||||||||||One Pair Probability Tests||||||||||||||||||||");
+		testHand.setHand(new PlayingCard[] {aces[1], aces[0], jacks[1], tens[2], nines[3]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,17,17,17}, testSuccess);
+		
+		testHand.setHand(new PlayingCard[] {jacks[1], tens[2], nines[3], twos[1], twos[0]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {17,17,17,0,0}, testSuccess);
+		
+		System.out.println("\n\n\n|||||||||||||||||||||High Hand Probability Tests||||||||||||||||||||");
+		testHand.setHand(new PlayingCard[] {aces[1], queens[0], jacks[1], tens[2], nines[3]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,25,25,25}, testSuccess);
+
+		
 		return testSuccess;
 	}
 	
@@ -1971,7 +1960,7 @@ public class HandOfCards {
 		
 		for (int i=0; i<CARDS_HELD; i++){
 			
-			consoleOutput += testHand.getDiscardProbability(i);
+			consoleOutput += testHand.getDiscardProbability(i) + ",";
 			
 			if (testHand.getDiscardProbability(i) != answers[i]){
 				
@@ -2010,6 +1999,10 @@ public class HandOfCards {
 		boolean boundaryTestSuccess = executeBoundaryTests(allCardsArray);
 		boolean innerTestsSuccess = executeInnerTests(allCardsArray);
 		
+		boolean methodTestSuccess = testHasAceLowSequence(allCardsArray) || testIsBrokenStraight(allCardsArray); 
+		
+		
+		boolean discardProbabilityTestSuccess = testDiscardProbabilities(allCardsArray);
 		
 		if (boundaryTestSuccess){
 			System.out.println("### All Boundary tests between hands successful.");
@@ -2023,11 +2016,20 @@ public class HandOfCards {
 		else {
 			System.out.println("XXX Inner test(s) failed, please check terminal above for failures");
 		}
+		if (methodTestSuccess){
+			System.out.println("### All Method tests successful.");
+		}
+		else {
+			System.out.println("XXX Method test(s) failed, please check terminal above for failures");
+		}
+		if (discardProbabilityTestSuccess){
+			System.out.println("### All Discard Probability tests successful.");
+		}
+		else {
+			System.out.println("XXX Discard Probability test(s) failed, please check terminal above for failures");
+		}
 		
-		testHasAceLowSequence(allCardsArray);
-		testIsBrokenStraight(allCardsArray);
 		
-		testDiscardProbabilities(allCardsArray);
 		
 	}
 
