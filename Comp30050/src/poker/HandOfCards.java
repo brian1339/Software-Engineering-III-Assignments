@@ -1007,8 +1007,126 @@ public class HandOfCards {
 	 */
 	private int discardProbabilityThreeOfAKind(int cardPosition) {
 		
+		int discardProbability = 0;
+		PlayingCard[] segmentSorted = segmentSort(3);
+		
+		/*
+		 * For the two unmatched cards we add the probability that we get the 
+		 * remaining matched card for a four of a kind and that the two unmatched
+		 * match to make a full house
+		 */
+		if (segmentSorted[0].getGameValue() != cardArray[cardPosition].getGameValue()){
+			discardProbability += 100*1/(52-cardArray.length) + 100*3/(52-cardArray.length); 
+		}
+		
+		return discardProbability;
 	}
 	
+	/**
+	 * Returns a integer probability from 0-100 of improving the hand from a 
+	 * Two Pair by discarding the card at the position input
+	 */
+	private int discardProbabilityTwoPair(int cardPosition) {
+		
+		int discardProbability = 0;
+		
+		/*
+		 * If card position is the unmatched card, we add the probability
+		 *  that it will match one of the pairs to make a full house
+		 */
+		if (cardArray[0].getGameValue() != cardArray[1].getGameValue()){
+			if (cardPosition == 0){
+				discardProbability += 100*4/(52-cardArray.length); 
+			}
+		}
+		else if (cardArray[2].getGameValue() != cardArray[3].getGameValue()){
+			if (cardPosition == 2){
+				discardProbability += 100*4/(52-cardArray.length); 
+			}
+		}
+		else if (cardArray[3].getGameValue() != cardArray[4].getGameValue()){
+			if (cardPosition == 4){
+				discardProbability += 100*4/(52-cardArray.length); 
+			}
+		}
+		
+		return discardProbability;
+	}
+	
+	/**
+	 * Returns a integer probability from 0-100 of improving the hand from a 
+	 * Two Pair by discarding the card at the position input
+	 */
+	private int discardProbabilityOnePair(int cardPosition) {
+		
+		int discardProbability = 0;
+
+		PlayingCard[] segmentSorted = segmentSort(2);
+		
+		/*
+		 * If the card at that position is busting a flush, we add the chance that
+		 * we could make a flush if we discard it
+		 */
+		if (isBustedFlush()){
+			if (cardArray[cardPosition].getSuit() != cardArray[(cardPosition+1)%cardArray.length].getSuit()){
+				discardProbability += 100*(13-4)/(52-cardArray.length);
+			}
+		}
+		
+		/*
+		 * If the card is a paired card breaking a straight, we add the probability
+		 * we could make a straight by discarding it
+		 */
+		if (isBrokenStraight()){
+			
+			if (cardArray[cardPosition].getGameValue() == segmentSorted[0].getGameValue()){
+				
+				// If the broken straight is ace high, only one card from each suit can make the straight
+				if (cardArray[0].getGameValue() == 14 && cardArray[4].getGameValue() != 2){
+					discardProbability += 100*4/(52-cardArray.length);
+				}
+				// If broken straight is ace low, only one card from each suit can make the straight
+				else if (cardArray[0].getFaceValue() == cardArray[4].getFaceValue()-1){
+					discardProbability += 100*4/(52-cardArray.length);
+				}
+				// Else there are 2 cards from each suit that could the front or end of the straight
+				else {
+					discardProbability += 100*8/(52-cardArray.length);
+				}
+			}
+		}
+		
+		/*
+		 * For the unmatched cards we add the probability that they could match with 
+		 * either the other two unmatched cards or the pair 
+		 */
+		if (cardArray[cardPosition].getGameValue() != segmentSorted[0].getGameValue()){
+			discardProbability += 100*8/(52-cardArray.length);
+		}
+		
+		return discardProbability;
+	}
+	
+	/**
+	 * Returns a integer probability from 0-100 of improving the hand from a 
+	 * High Hand by discarding the card at the position input
+	 */
+	private int discardProbabilityHighHand(int cardPosition) {
+		
+		int discardProbability = 0;
+		
+		/*
+		 * For the three lowest ranking cards, we add the probabilities that 
+		 * they will match with one of the other four cards
+		 */
+		
+		if (cardPosition>1){
+			discardProbability += 100*4*3/(52-cardArray.length);
+		}
+		
+		return discardProbability;
+	}
+
 	
 	/**
 	 * Take the position of a card in the array and returns an int in the range
@@ -1043,23 +1161,21 @@ public class HandOfCards {
 		}
 		if (isStraight()){
 			discardProbability = discardProbabilityStraight(cardPosition);
-			
 		}
 		if (isThreeOfAKind()){
 			discardProbability = discardProbabilityThreeOfAKind(cardPosition);
 		}
-		if (){
-			
+		if (isTwoPair()){
+			discardProbability = discardProbabilityTwoPair(cardPosition);
 		}
-		if (){
-			
+		if (isOnePair()){
+			discardProbability = discardProbabilityOnePair(cardPosition);
 		}
-		if (){
-			
+		if (isHighHand()){
+			discardProbability = discardProbabilityHighHand(cardPosition);
 		}
-		if (){
-			
-		}
+		
+		return discardProbability;
 	}
 	
 
