@@ -258,17 +258,20 @@ public class HandOfCards {
 	 * ie. hand contains two separate pairs of matching cards
 	 */
 	public boolean isTwoPair(){
-		//Check all hands that could supersede this one 
+		// Check all hands that could supersede this one 
 		if (isFullHouse() || isFourOfAKind()){
 			return false;
 		}
 		
-		//Check if there are two pairs of adjacent cards in sorted array with the same game value
+		// Check if there are two pairs of adjacent cards in sorted array with the same game value
 		boolean twoPair = false;
 		//First check if there is a pair in the first three entries
 		for (int i=1; i<cardArray.length-2; i++){
 			if (cardArray[i-1].getGameValue() == cardArray[i].getGameValue()){
-				//If one pair exists, we check the rest of the array for another pair of adjacent cards with the same game value
+				/* 
+				 * If one pair exists, we check the rest of the array for another pair of 
+				 * adjacent cards with the same game value
+				 */
 				for (int j=i+2; j<cardArray.length; j++){
 					if (cardArray[j-1].getGameValue() == cardArray[j].getGameValue()){
 						twoPair = true;
@@ -630,20 +633,225 @@ public class HandOfCards {
 	 * ie. The cards are all in sequential order like a straight but one 
 	 */
 	public boolean isBrokenStraight(){
-		boolean brokenStraight = false;
 		
-		//Check each card of the array has decrementing value from the one previous
-		for (int i=0; i<cardArray.length-1; i++){
-			
-			if (cardArray[i+1].getGameValue() != cardArray[i].getGameValue()-1){
-				brokenStraight = true;
-				
-			}
+		if (isStraight()){
+			return false;
 		}
+		
+		boolean brokenStraight;
+	
+		brokenStraight = isBrokenStraightMissingLink();
+		
+		if (!brokenStraight) {
+			brokenStraight = isBrokenStraightSolidFour();
+		}
+		
+		
 		//TODO
 		return brokenStraight;
 	}
 	
+	/**
+	 * Returns a boolean to say whether the hand is a broken straight with 
+	 * a missing link card absent in the middle
+	 * 
+	 * TODO Doesn't acount for 7542A
+	 */
+	private boolean isBrokenStraightMissingLink(){
+
+		boolean brokenStraight = false;
+		
+		for (int i=0; i<cardArray.length-1; i++){
+			
+			if (cardArray[i+1].getGameValue() != cardArray[i].getGameValue()-1 && brokenStraight){
+				brokenStraight = false;
+				break;
+				
+			}
+			else if (cardArray[i+1].getGameValue() != cardArray[i].getGameValue()-1 
+					&& cardArray[i].getGameValue()-cardArray[i+1].getGameValue() == 2){ 
+				brokenStraight = true;
+				
+			}
+		}
+		
+		return brokenStraight;
+	}
+	
+	/**
+	 * Returns a boolean indicating whether the straight is a broken straight with 4 cards 
+	 * in sequence and one odd card
+	 */
+	public boolean isBrokenStraightSolidFour() {
+		
+		boolean brokenStraight = false;
+		
+		// Check for broken straight with stray card at begining of array
+		if (cardArray[0].getGameValue() != cardArray[1].getGameValue()+1){
+			brokenStraight = true;
+			for (int i=1; i<cardArray.length-1; i++){
+				if (cardArray[i].getGameValue() != cardArray[i+1].getGameValue()+1){
+					brokenStraight = false;
+				}
+			}
+		}
+		
+		// Check for broken straight with stray card at end of array
+		if (!brokenStraight && cardArray[3].getGameValue() != cardArray[4].getGameValue()){
+			for (int i=0; i<cardArray.length-2; i++){
+				if (cardArray[i].getGameValue() != cardArray[i+1].getGameValue()+1){
+					brokenStraight = false;
+				}
+			}
+		}
+		
+		// Check for broken straight with ace low
+		if (!brokenStraight && cardArray[1].getGameValue() != cardArray[2].getGameValue()){
+			for (int i=0; i<cardArray.length-2; i++){
+				if (cardArray[i].getFaceValue() != cardArray[(i+1)%cardArray.length].getFaceValue()+1){
+					brokenStraight = false;
+				}
+			}
+		}
+		
+	}
+	
+	
+	/**
+	 * Returns an integer probability from 0-100 of improving the hand from a 
+	 * straight Flush by discarding the card at the position input
+	 */
+	
+	private int discardProbabilityStraightFlush(int cardPosition) {
+
+		// Start with probability 0 
+		int discardProbability = 0;
+		
+		/*
+		 *  Lowest card may improve the hand if a card gotten
+		 *  increments the straight sequence
+		 */
+		if (cardPosition == cardArray.length-1){
+			discardProbability += 100*4/(52-cardArray.length);
+		}
+		
+		return discardProbability;
+	}
+	
+	/**
+	 * Returns a integer probability from 0-100 of improving the hand from a 
+	 * straight by discarding the card at the position input
+	 */
+	private int discardProbabilityFullHouse(int cardPosition){
+		
+
+		int discardProbability = 0;
+		
+		// Throwing away the pair has a small chance of getting the card to increase the hand to a 4 of a kind
+		PlayingCard[] segmentSorted = segmentSort(2);
+		if (cardArray[cardPosition].getGameValue() == segmentSorted[0].getGameValue()){
+			discardProbability += 1/(52 - cardArray.length);
+		}
+		
+		return discardProbability;
+	}
+	
+	private int discardProbabilityFlush (int cardPosition){
+
+		int discardProbability = 0;
+		
+		/*
+		 *  If a broken straight is in the flush, getting a card to complete the flush 
+		 *  has the possibility of making a straight flush
+		 */
+		if (isBrokenStraight()){
+			
+		}
+	}
+	
+	/**
+	 * Returns a integer probability from 0-100 of improving the hand from a 
+	 * straight by discarding the card at the position input
+	 */
+	private int discardProbalityStraight(int cardPosition) {
+		
+		// Start with probability 0 
+		int discardProbability = 0;
+		
+		/*
+		 *  Lowest card may improve the hand if a card gotten
+		 *  increments the straight sequence
+		 */
+		if (cardPosition == cardArray.length-1){
+			discardProbability += 100*4/(52-cardArray.length);
+		}
+		
+		/*
+		 * If card is a flush buster, increase discard probability by
+		 * that of getting another card of the flushing suit  
+		 */
+		if (isBustedFlush()){
+			if (cardArray[cardPosition].getSuit() != 
+					cardArray[(cardPosition+1)%cardArray.length].getSuit()){
+				discardProbability += 100*(13-4)/(52-cardArray.length);
+			}
+		}
+		
+		return discardProbability;
+	}
+	
+	/**
+	 * Take the position of a card in the array and returns an int in the range
+	 * 0-100 to represent the possibility of the hand being discarded to improve
+	 * the poker hand. Returns -1 for invalid input.
+	 */
+	public int getDiscardProbability(int cardPosition){
+		
+		// Return -1 if an invalid input is received
+		if (cardPosition < 0 || cardPosition >= cardArray.length){
+			return -1;
+		}
+		
+		int discardProbability = 0;
+		
+		if (isRoyalFlush()){
+			// No chance of improving a royal flush hand
+			discardProbability = 0;
+		}
+		if (isStraightFlush()){
+			discardProbability = discardProbabilityStraightFlush(cardPosition);
+		}
+		if (isFourOfAKind()){
+			// No chance of improving a 4 of a kind hand
+			discardProbability = 0;
+		}
+		if (isFullHouse()){
+			discardProbability = discardProbabilityFullHouse(cardPosition);
+		}
+		if (isFlush()){
+			discardProbability = discardProbabilityFlush(cardPosition);
+		}
+		if (){
+			
+		}
+		if (){
+			
+		}
+		if (){
+			
+		}
+		if (){
+			
+		}
+		if (){
+			
+		}
+		if (){
+			
+		}
+	}
+	
+
 	/**
 	 * Tests all boundary cases between game values hands and all 
 	 * other workings of the class work correctly
@@ -1146,8 +1354,8 @@ public class HandOfCards {
 		boolean testSuccess = true;
 		
 		if (highHand.getGameValue() <= lowHand.getGameValue()){
-			System.out.println("####### " + testType + " Error (Less than or Equal):" + highHand.toString() + highHand.handType() 
-					+ " vs. " + lowHand.toString() + lowHand.handType());
+			System.out.println("####### " + testType + " Error (Less than or Equal):" + highHand.toString() 
+					+ highHand.handType() + " vs. " + lowHand.toString() + lowHand.handType());
 			testSuccess = false;
 		}
 		else {
