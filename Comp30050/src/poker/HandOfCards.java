@@ -1728,6 +1728,7 @@ public class HandOfCards {
 		}
 		return testSuccess;
 	}
+	
 	/**
 	 * Tests the isBrokenStraightSolidFour
 	 * @return true if tests all pass and method functions correctly 
@@ -1750,6 +1751,7 @@ public class HandOfCards {
 
 		return testSuccess;
 	}
+	
 	/**
 	 * Tests the isBrokenStraightSolidFour
 	 * @return true if tests all pass and method functions correctly 
@@ -1883,15 +1885,30 @@ public class HandOfCards {
 		return testSuccess;
 	}
 	
-	//TODO
-	/**
-	 * Tests the isBustedFlush() method and it's outputs 
-	 */
-	/*
-	private boolean testIsBustedFlush(){
-		lowHand.setHand(new PlayingCard[] {aces[0], kings[1], queens[0], jacks[0], nines[0]});
-		System.out.println("isBustedFlush test: " + lowHand.isBustedFlush());
-	}*/
+	private static boolean testDiscardProbabilities(PlayingCard[][] allCards){
+		
+		boolean testSuccess = true;
+		int[] answers = new int[5];
+		DeckOfCards testDeck = new DeckOfCards();
+		HandOfCards testHand = new HandOfCards(testDeck);
+		
+		// Break some of allCards into different card categories for ease of access to different ranks
+		PlayingCard[] aces, kings, queens, jacks, tens, sixes, fives, fours,
+		threes, twos;
+		aces = allCards[12];
+		kings = allCards[11];
+		queens = allCards[10];
+		jacks = allCards[9];
+		tens = allCards[8];
+		sixes = allCards[4];
+		fives = allCards[3];
+		fours = allCards[2];
+		threes = allCards[1];
+		twos = allCards[0];
+		
+		answers = {0,0,0,0,0};
+		
+	}
 	
 	/*
 	 * Executes boundary tests and inner hand tests and prints the test status 
