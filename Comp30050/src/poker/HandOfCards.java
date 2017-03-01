@@ -640,14 +640,9 @@ public class HandOfCards {
 		
 		boolean brokenStraight;
 	
-		brokenStraight = isBrokenStraightMissingLink();
+		brokenStraight = isBrokenStraightMissingLink() || isBrokenStraightSolidFour() || isBrokenStraightPairDisrupt();
 		
-		if (!brokenStraight) {
-			brokenStraight = isBrokenStraightSolidFour();
-		}
-		
-		
-		//TODO
+	
 		return brokenStraight;
 	}
 	
@@ -769,9 +764,60 @@ public class HandOfCards {
 	}
 	
 	/**
-	 * Returns a boolean to indicate hand is a broken straight with a pair 
-	 * card interrupting the sequence in the array TODO
+	 * Returns a boolean to indicate hand is a broken straight with a pair card
+	 * interrupting the sequence in the array
 	 */
+	public boolean isBrokenStraightPairDisrupt(){
+		
+		boolean brokenStraight = true;
+		int pairCount =0;
+		 
+		
+		// Go through the array and check if all cards are straight except for 1 pair
+		for (int i=0; i < cardArray.length-1; i++){
+			
+			if (cardArray[i].getGameValue() != cardArray[i+1].getGameValue()+1){
+				
+				if(cardArray[i].getGameValue() == cardArray[i+1].getGameValue()){
+					pairCount++;
+					if (pairCount > 1){
+						brokenStraight = false;
+						break;
+					}
+				}
+				else {
+					brokenStraight = false;
+					break;
+				}
+			}
+		}
+		
+		// Check for the ace low case 
+		if (!brokenStraight){
+			
+			brokenStraight = true;
+			
+			for (int i=1; i < cardArray.length; i++){
+				
+				if (cardArray[i].getFaceValue() != cardArray[(i+1)%cardArray.length].getFaceValue()+1){
+					
+					if(cardArray[i].getFaceValue() == cardArray[(i+1)%cardArray.length].getFaceValue()){
+						pairCount++;
+						if (pairCount > 1){
+							brokenStraight = false;
+							break;
+						}
+					}
+					else {
+						brokenStraight = false;
+						break;
+					}
+				}
+			}
+		}
+		
+		return brokenStraight;
+	}
 	
 	
 	/**
@@ -1466,8 +1512,6 @@ public class HandOfCards {
 	private static boolean testIsBrokenStraightSolidFour(PlayingCard[][] allCards) throws InterruptedException {
 		boolean testSuccess = true;
 		
-		System.out.println("----------test for isBrokenStraightSolidFour() method---------");
-		
 		PlayingCard ace, seven, six, five, four, three, two;
 		DeckOfCards testDeck = new DeckOfCards();
 		HandOfCards testHand = new HandOfCards(testDeck);
@@ -1479,27 +1523,7 @@ public class HandOfCards {
 		five = allCards[3][0];
 		six = allCards[4][0];
 		seven = allCards[5][0];
-		
-		testHand.setHand(new PlayingCard[] {ace, seven, four, three, two});
-		System.out.println(testHand.toString() + testHand.isBrokenStraight() + ", EXPECTED: true");
-		if (!testHand.isBrokenStraight()){
-			System.out.println("####### Failed test above");
-			testSuccess =  false;
-		}
-		
-		testHand.setHand(new PlayingCard[] {seven, five, four, three, two});
-		System.out.println(testHand.toString() + testHand.isBrokenStraight() + ", EXPECTED: true");
-		if (!testHand.isBrokenStraight()){
-			System.out.println("####### Failed test above");
-			testSuccess =  false;
-		}
-		
-		testHand.setHand(new PlayingCard[] {seven, six, five, four, two});
-		System.out.println(testHand.toString() + testHand.isBrokenStraight() + ", EXPECTED: true");
-		if (!testHand.isBrokenStraight()){
-			System.out.println("####### Failed test above");
-			testSuccess =  false;
-		}
+
 		return testSuccess;
 	}
 	/**
@@ -1509,8 +1533,6 @@ public class HandOfCards {
 	 */
 	private static boolean testIsBrokenStraightMissingLink(PlayingCard[][] allCards) throws InterruptedException {
 		boolean testSuccess = true;
-		
-		System.out.println("----------test for isBrokenStraightSolidFour() method---------");
 		
 		PlayingCard ace, eight, seven, six, five, four, three, two;
 		DeckOfCards testDeck = new DeckOfCards();
@@ -1524,6 +1546,63 @@ public class HandOfCards {
 		six = allCards[4][0];
 		seven = allCards[5][0];
 		eight = allCards[6][0];
+		
+		
+		
+		return testSuccess;
+	}
+	
+	private static boolean testIsBrokenStraight(PlayingCard[][] allCards) throws InterruptedException {
+		boolean testSuccess = true;
+		
+		System.out.println("----------test for isBrokenStraightPairDisrupt() method---------");
+		
+		PlayingCard ace, acePair, eight, seven, six, five, four, three, two, twoPair;
+		DeckOfCards testDeck = new DeckOfCards();
+		HandOfCards testHand = new HandOfCards(testDeck);
+		
+		ace = allCards[12][0];
+		two = allCards[0][0];
+		three = allCards[1][0];
+		four = allCards[2][0];
+		five = allCards[3][0];
+		six = allCards[4][0];
+		seven = allCards[5][0];
+		eight = allCards[6][0];
+		
+		acePair = allCards[12][1];
+		twoPair = allCards[0][1];
+		
+		testHand.setHand(new PlayingCard[] {ace, acePair, four, three, two});
+		System.out.println(testHand.toString() + testHand.isBrokenStraight() + ", EXPECTED: true");
+		if (!testHand.isBrokenStraight()){
+			System.out.println("####### Failed test above");
+			testSuccess =  false;
+		}
+		
+		testHand.setHand(new PlayingCard[] {five, four, three, two, twoPair});
+		System.out.println(testHand.toString() + testHand.isBrokenStraight() + ", EXPECTED: true");
+		if (!testHand.isBrokenStraight()){
+			System.out.println("####### Failed test above");
+			testSuccess =  false;
+		}
+		
+		testHand.setHand(new PlayingCard[] {ace, four, three, two, twoPair});
+		System.out.println(testHand.toString() + testHand.isBrokenStraight() + ", EXPECTED: true");
+		if (!testHand.isBrokenStraight()){
+			System.out.println("####### Failed test above");
+			testSuccess =  false;
+		}
+		
+		testHand.setHand(new PlayingCard[] {ace, six, four, two, twoPair});
+		System.out.println(testHand.toString() + testHand.isBrokenStraight() + ", EXPECTED: false");
+		if (testHand.isBrokenStraight()){
+			System.out.println("####### Failed test above");
+			testSuccess =  false;
+		}
+		
+
+		System.out.println("----------test for isBrokenStraightSolidFour() method---------");
 		
 		testHand.setHand(new PlayingCard[] {ace, six, four, three, two});
 		System.out.println(testHand.toString() + testHand.isBrokenStraight() + ", EXPECTED: true");
@@ -1549,6 +1628,30 @@ public class HandOfCards {
 		testHand.setHand(new PlayingCard[] {ace, eight, six, four, two});
 		System.out.println(testHand.toString() + testHand.isBrokenStraight() + ", EXPECTED: false");
 		if (testHand.isBrokenStraight()){
+			System.out.println("####### Failed test above");
+			testSuccess =  false;
+		}
+		
+
+		System.out.println("----------test for isBrokenStraightSolidFour() method---------");
+		
+		testHand.setHand(new PlayingCard[] {ace, seven, four, three, two});
+		System.out.println(testHand.toString() + testHand.isBrokenStraight() + ", EXPECTED: true");
+		if (!testHand.isBrokenStraight()){
+			System.out.println("####### Failed test above");
+			testSuccess =  false;
+		}
+		
+		testHand.setHand(new PlayingCard[] {seven, five, four, three, two});
+		System.out.println(testHand.toString() + testHand.isBrokenStraight() + ", EXPECTED: true");
+		if (!testHand.isBrokenStraight()){
+			System.out.println("####### Failed test above");
+			testSuccess =  false;
+		}
+		
+		testHand.setHand(new PlayingCard[] {seven, six, five, four, two});
+		System.out.println(testHand.toString() + testHand.isBrokenStraight() + ", EXPECTED: true");
+		if (!testHand.isBrokenStraight()){
 			System.out.println("####### Failed test above");
 			testSuccess =  false;
 		}
@@ -1599,8 +1702,7 @@ public class HandOfCards {
 		}
 		
 		testHasAceLowSequence(allCardsArray);
-		testIsBrokenStraightSolidFour(allCardsArray);
-		testIsBrokenStraightMissingLink(allCardsArray);
+		testIsBrokenStraight(allCardsArray);
 		
 	}
 
