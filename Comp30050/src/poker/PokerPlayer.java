@@ -25,26 +25,13 @@ public class PokerPlayer {
 		
 		int cardsDiscarded = 0;
 		
-		if (hand.isRoyalFlush()){
-			return 0;
+		if (hand.isBrokenStraight()|| hand.isBustedFlush()){
+			//Account for broken straight && busted flush too
 		}
-		if (hand.isStraightFlush()){
-		}
-		if (hand.isFourOfAKind()){
-		}
-		if (hand.isFullHouse()){
-		}
-		if (hand.isFlush()){
-		}
-		if (hand.isStraight()){
-		}
-		if (hand.isThreeOfAKind()){
-		}
-		if (hand.isTwoPair()){
-		}
-		if (hand.isOnePair()){
-		}
-		if (hand.isHighHand()){
+		else {
+			for (int i=0; i<hand.CARDS_HELD; i++){
+				
+			}
 		}
 		
 		return cardsDiscarded;

@@ -19,7 +19,7 @@ public class HandOfCards {
 	/*
 	 * Internal fields of hand
 	 */
-	private static final int CARDS_HELD = 5;
+	public static final int CARDS_HELD = 5;
 	private PlayingCard[] cardArray;
 	private DeckOfCards deck;
 	
@@ -1182,6 +1182,18 @@ public class HandOfCards {
 		}
 		
 		return discardProbability;
+	}
+	
+	/**
+	 * Discards a card at the given index back to the deck and replaces it with a new one
+	 * @throws InterruptedException 
+	 */
+	public void replaceCardFromDeck(int index) throws InterruptedException{
+		if (index >= 0 && index < cardArray.length){
+			deck.returnCard(cardArray[index]);
+			cardArray[index] = deck.dealNext();
+			sort();
+		}
 	}
 	
 
