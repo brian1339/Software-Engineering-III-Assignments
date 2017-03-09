@@ -620,6 +620,7 @@ public class HandOfCards {
 					}
 					
 				}
+				
 				//We only want to check for a single card difference so break after one check
 				break;
 			}
@@ -1127,6 +1128,7 @@ public class HandOfCards {
 		if (cardPosition>1){
 			discardProbability += 100*4*3/(52-cardArray.length);
 		}
+		
 		
 		return discardProbability;
 	}
@@ -1915,8 +1917,8 @@ public class HandOfCards {
 		testHand.setHand(new PlayingCard[] {sevens[0], sixes[0], fives[0], fours[0], threes[1]});
 		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,0,0,27}, testSuccess);
 		
-		testHand.setHand(new PlayingCard[] {sevens[0], sixes[0], fives[0], fours[1], threes[0]});
-		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,0,19,8}, testSuccess);
+		testHand.setHand(new PlayingCard[] {sevens[1], sixes[0], fives[0], fours[0], threes[0]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {19,0,0,0,8}, testSuccess);
 		
 		System.out.println("\n\n\n|||||||||||||||||||||Three of a Kind Probability Tests||||||||||||||||||||");
 		testHand.setHand(new PlayingCard[] {nines[1], nines[2], nines[3], fives[0], fours[1]});
@@ -1940,8 +1942,17 @@ public class HandOfCards {
 		testSuccess = testProbabilityEquality(testHand, new int[] {17,17,17,0,0}, testSuccess);
 		
 		System.out.println("\n\n\n|||||||||||||||||||||High Hand Probability Tests||||||||||||||||||||");
-		testHand.setHand(new PlayingCard[] {aces[1], queens[0], jacks[1], tens[2], nines[3]});
+		testHand.setHand(new PlayingCard[] {aces[1], queens[0], jacks[1], tens[2], eights[3]});
 		testSuccess = testProbabilityEquality(testHand, new int[] {0,0,25,25,25}, testSuccess);
+		/*
+		testHand.setHand(new PlayingCard[] {aces[1], queens[0], jacks[1], tens[2], nines[3]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {4,0,25,25,25}, testSuccess);
+		*/
+		testHand.setHand(new PlayingCard[] {aces[1], queens[0], jacks[0], tens[0], nines[0]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {19,0,25,25,25}, testSuccess);
+		
+		testHand.setHand(new PlayingCard[] {aces[0], queens[1], jacks[0], tens[0], eights[0]});
+		testSuccess = testProbabilityEquality(testHand, new int[] {19,0,25,25,25}, testSuccess);
 
 		
 		return testSuccess;
